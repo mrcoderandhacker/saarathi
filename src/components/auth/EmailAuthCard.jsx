@@ -71,7 +71,7 @@ export default function EmailAuthCard() {
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: `${origin}/contact-soon`,
+        emailRedirectTo: `${origin}/Callback`,
       },
     });
 
