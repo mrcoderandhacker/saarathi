@@ -9,7 +9,7 @@ export default function App() {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/signup" element={<Signup />} />
-      <Route path="/auth/callback" element={<AuthCallback />} />
+      <Route path="/callback" element={<Callback />} />
       <Route path="/auth" element={<Auth />} />
     </Routes>
   );

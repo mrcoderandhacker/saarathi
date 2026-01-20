@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "../../lib/supabase";
 import styled from "styled-components";
 import { motion } from "framer-motion";
@@ -19,6 +19,7 @@ const Title = styled.h2`
   font-family: "Playfair Display", serif;
   font-size: 1.8rem;
   color: #111827;
+  margin-bottom: 0.6rem;
 `;
 
 const Subtitle = styled.p`
@@ -37,11 +38,12 @@ const Input = styled.input`
 
 const Button = styled.button`
   width: 100%;
-  background: #111827;
+  background: ${({ disabled }) => (disabled ? "#9ca3af" : "#111827")};
   color: white;
   border: none;
   padding: 0.9rem;
   border-radius: 999px;
+  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
 `;
 
 const Message = styled.p`
@@ -56,42 +58,110 @@ const Message = styled.p`
 export default function EmailAuthCard() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
-  const [msg, setMsg] = useState(null);
-  const [err, setErr] = useState(null);
+  const [message, setMessage] = useState(null);
+  const [error, setError] = useState(null);
+
+  const normalizePhone = (phone) => {
+    if (!phone) return null;
+    const digits = phone.replace(/\D/g, "");
+    return digits.length === 10 ? `+91${digits}` : null;
+  };
+
+  const saveOnboardingDataToDatabase = async (user) => {
+    const raw = localStorage.getItem("saarathi_onboarding");
+    if (!raw) return;
+
+    const answers = JSON.parse(raw);
+
+    const phone = normalizePhone(answers.phone);
+    const whatsapp = normalizePhone(answers.whatsapp) || phone;
+
+    const { data: existing } = await supabase
+      .from("student_profiles")
+      .select("id")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (existing) {
+      await supabase
+        .from("student_profiles")
+        .update({
+          phone,
+          whatsapp,
+          stage: answers.stage,
+          exam: answers.exam,
+          state: answers.state,
+          need: answers.need,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("user_id", user.id);
+    } else {
+      await supabase.from("student_profiles").insert([
+        {
+          user_id: user.id,
+          email: user.email,
+          phone,
+          whatsapp,
+          stage: answers.stage,
+          exam: answers.exam,
+          state: answers.state,
+          need: answers.need,
+          created_at: new Date().toISOString(),
+        },
+      ]);
+    }
+
+    localStorage.removeItem("saarathi_onboarding");
+  };
+
+  useEffect(() => {
+    const { data: { subscription } } =
+      supabase.auth.onAuthStateChange(async (event, session) => {
+        if (event === "SIGNED_IN" && session?.user) {
+          await saveOnboardingDataToDatabase(session.user);
+        }
+      });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    setLoading(true);
-    setErr(null);
-    setMsg(null);
+    if (!email || !email.includes("@")) {
+      setError("Enter a valid email");
+      return;
+    }
 
-    const origin = window.location.origin;
+    setLoading(true);
+    setError(null);
+    setMessage(null);
 
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: `${origin}/callback`,
+        emailRedirectTo: "https://saarathi-beige.vercel.app/callback",
+        shouldCreateUser: true,
       },
     });
 
     setLoading(false);
 
-    if (error) setErr(error.message);
-    else setMsg("Login link sent. Please check your email.");
+    if (error) setError(error.message);
+    else setMessage("Login link sent. Check your email.");
   };
 
   return (
     <Card>
       <form onSubmit={handleLogin}>
         <Title>Continue with email</Title>
-        <Subtitle>No passwords. Secure login.</Subtitle>
+        <Subtitle>No passwords needed.</Subtitle>
 
         <Input
           type="email"
+          placeholder="you@example.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="you@example.com"
         />
 
         <Button disabled={!email || loading}>
@@ -99,8 +169,8 @@ export default function EmailAuthCard() {
         </Button>
       </form>
 
-      {msg && <Message>{msg}</Message>}
-      {err && <Message error>{err}</Message>}
+      {message && <Message>{message}</Message>}
+      {error && <Message error>{error}</Message>}
     </Card>
   );
 }
