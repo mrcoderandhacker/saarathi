@@ -17,7 +17,7 @@ const Card = styled.div`
   text-align: center;
 `;
 
-export default function Callback() {
+export default function callback() {
   useEffect(() => {
     const saveProfile = async () => {
       const { data } = await supabase.auth.getSession();
