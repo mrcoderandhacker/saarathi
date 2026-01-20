@@ -2,7 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Signup from "./pages/Signup";
 import Auth from "./pages/Auth";
-import AuthCallback from "./pages/AuthCallback";
+import Callback from "./pages/Callback";
 
 export default function App() {
   return (
