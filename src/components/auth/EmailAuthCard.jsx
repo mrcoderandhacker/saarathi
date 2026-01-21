@@ -103,7 +103,7 @@ export default function EmailAuthCard() {
     } else {
       setSent(true);
       setMessage(
-        "Login link sent ✨"<br>"Please open the link to complete your signup"
+        "Login link sent ✨ Please open the link to complete your signup"
       );
     }
   };
