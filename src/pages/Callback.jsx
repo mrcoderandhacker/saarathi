@@ -86,7 +86,6 @@ export default function Callback() {
         localStorage.removeItem("saarathi_onboarding");
 
         // 6️⃣ Redirect
-        window.location.replace("/contact-soon");
       } catch (err) {
         console.error("Callback error:", err);
       }
