@@ -103,7 +103,7 @@ export default function EmailAuthCard() {
     } else {
       setSent(true);
       setMessage(
-        "Login link sent ✨\n\nPlease open the link in the SAME browser and device where you started signup.\n\nIf you opened email on another device, copy the link and paste it here."
+        "Login link sent ✨"<br>"Please open the link to complete your signup"
       );
     }
   };
