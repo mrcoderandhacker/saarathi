@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import logo from "../resources/logo.png"; // ✅ IMPORTANT (relative import)
 
 /* ------------------ STYLES ------------------ */
 
@@ -23,12 +24,18 @@ const Nav = styled.nav`
   justify-content: space-between;
 `;
 
-const Logo = styled.div`
+const LogoWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+`;
+
+const LogoText = styled.span`
   font-family: "Playfair Display", serif;
   font-size: 1.3rem;
   font-weight: 600;
   color: #111827;
-  cursor: pointer;
 `;
 
 const Links = styled.ul`
@@ -63,7 +70,7 @@ const LoginButton = styled.button`
   border: none;
   font-size: 0.9rem;
   color: #4b5563;
-  transition: color 0.2s ease;
+  cursor: pointer;
 
   &:hover {
     color: #111827;
@@ -81,6 +88,7 @@ const PrimaryButton = styled.button`
   padding: 0.55rem 1.4rem;
   border-radius: 999px;
   font-size: 0.9rem;
+  cursor: pointer;
   transition: background 0.25s ease;
 
   &:hover {
@@ -90,20 +98,31 @@ const PrimaryButton = styled.button`
 
 /* ------------------ COMPONENT ------------------ */
 
-export default function Navbar() {
+export default function Navbar({ animate = true }) {
   const navigate = useNavigate();
 
   return (
     <Header
-      initial={{ y: -20, opacity: 0 }}
+      initial={animate ? { y: -20, opacity: 0 } : undefined}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
     >
       <Nav>
-        {/* Logo */}
-        <Logo onClick={() => navigate("/")}>Saarathi</Logo>
+        {/* LOGO + TEXT (linked with splash) */}
+        <LogoWrapper onClick={() => navigate("/")}>
+          <motion.img
+            src={logo}
+            alt="Saarathi Logo"
+            layoutId="saarathi-logo"
+            style={{ width: 34, height: 34 }}
+          />
 
-        {/* Center Links */}
+          <motion.span layoutId="saarathi-text">
+            <LogoText>Saarathi</LogoText>
+          </motion.span>
+        </LogoWrapper>
+
+        {/* CENTER LINKS */}
         <Links>
           <LinkItem>Mentorship</LinkItem>
           <LinkItem>How It Works</LinkItem>
@@ -111,12 +130,9 @@ export default function Navbar() {
           <LinkItem>Journal</LinkItem>
         </Links>
 
-        {/* Actions */}
+        {/* ACTIONS */}
         <Actions>
-          <LoginButton /* later → navigate("/login") */>
-            Login
-          </LoginButton>
-
+          <LoginButton>Login</LoginButton>
           <PrimaryButton onClick={() => navigate("/signup")}>
             Get Started
           </PrimaryButton>
