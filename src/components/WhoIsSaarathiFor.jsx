@@ -88,9 +88,9 @@ export default function WhoIsSaarathiFor() {
     <Section>
       <Container>
         <Header>
-          <Title>Who is Saarathi for?</Title>
+          <Title>Who is Saarathii for?</Title>
           <Subtitle>
-            Saarathi is designed for students standing at important
+            Saarathii is designed for students standing at important
             crossroads — unsure, curious, or overwhelmed — and looking
             for clarity before taking the next step.
           </Subtitle>

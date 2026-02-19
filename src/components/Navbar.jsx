@@ -118,7 +118,7 @@ export default function Navbar({ animate = true }) {
           />
 
           <motion.span layoutId="saarathi-text">
-            <LogoText>Saarathi</LogoText>
+            <LogoText>Saarathii</LogoText>
           </motion.span>
         </LogoWrapper>
 

@@ -86,7 +86,7 @@ export default function StudentLetter() {
           </Paragraph>
 
           <Paragraph>
-            That is why Saarathi exists.
+            That is why Saarathii exists.
           </Paragraph>
 
           <Paragraph>
@@ -103,14 +103,14 @@ export default function StudentLetter() {
 
           <Paragraph>
             <Highlight>
-              Saarathi will stay with you until you reach the right college —
+              Saarathii will stay with you until you reach the right college —
               and more importantly, until you believe in your own journey.
             </Highlight>
           </Paragraph>
 
           <Signature>
             With care and belief in you,
-            <Name>Saarathi Mentorship Team</Name>
+            <Name>Saarathii Mentorship Team</Name>
           </Signature>
         </LetterCard>
       </Container>

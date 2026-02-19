@@ -68,7 +68,7 @@ export default function WhySaarathi() {
     <Section>
       <Container>
         <Header>
-          <Title>Why Saarathi?</Title>
+          <Title>Why Saarathii?</Title>
           <Subtitle>
             Because choosing your future shouldn’t feel rushed,
             confusing, or lonely. Saarathi exists to give students
@@ -114,7 +114,7 @@ export default function WhySaarathi() {
           >
             <CardTitle>Support beyond academics</CardTitle>
             <CardText>
-              Saarathi supports not just your studies, but your mindset,
+              Saarathii supports not just your studies, but your mindset,
               confidence, and emotional well-being — because clarity
               begins with calm.
             </CardText>

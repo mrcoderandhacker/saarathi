@@ -77,9 +77,9 @@ export default function WhatYouGet() {
     <Section>
       <Container>
         <Header>
-          <Title>What you get with Saarathi</Title>
+          <Title>What you get with Saarathii</Title>
           <Subtitle>
-            Saarathi is not a one-time service. It is a continuous
+            Saarathii is not a one-time service. It is a continuous
             mentorship journey designed to support you academically,
             emotionally, and strategically until you reach the right
             college.

@@ -91,9 +91,9 @@ export default function Footer() {
         {/* TOP */}
         <TopGrid>
           <Brand>
-            <Logo>Saarathi</Logo>
+            <Logo>Saarathii</Logo>
             <BrandText>
-              Saarathi is a student mentorship platform built to guide
+              Saarathii is a student mentorship platform built to guide
               students through the most important academic decisions of
               their lives — with clarity, care, and continuous support.
             </BrandText>
@@ -126,7 +126,7 @@ export default function Footer() {
         {/* BOTTOM */}
         <BottomBar>
           <BottomText>
-            © {new Date().getFullYear()} Saarathi. All rights reserved.
+            © {new Date().getFullYear()} Saarathii. All rights reserved.
           </BottomText>
           <BottomText>
             With you. For you. Until you succeed.

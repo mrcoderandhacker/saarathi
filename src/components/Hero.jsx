@@ -136,7 +136,7 @@ export default function Hero() {
             </Heading>
 
             <Description>
-              Saarathi is your personal mentor through the most confusing
+              Saarathii is your personal mentor through the most confusing
               phase of your academic journey — from Class 10 to your dream
               college.
             </Description>
@@ -148,7 +148,7 @@ export default function Hero() {
 
             <ButtonRow>
               <PrimaryButton onClick={() => navigate("/signup")}>
-                Get Your Saarathi
+                Get Your Saarathii
               </PrimaryButton>
 
               <SecondaryButton>

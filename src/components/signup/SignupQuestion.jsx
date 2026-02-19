@@ -174,7 +174,7 @@ export default function SignupQuestion({
 
         <Question style={{ textAlign: "center" }}>{question}</Question>
         <FinalMessage>
-          We’re ready to create your Saarathi journey.
+          We’re ready to create your Saarathii journey.
         </FinalMessage>
 
         <Options $hasInput={false}>

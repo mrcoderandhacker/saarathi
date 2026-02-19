@@ -6,8 +6,8 @@ export default function AnimatedName() {
   const [displayText, setDisplayText] = useState("");
 
   useEffect(() => {
-    // Smooth typewriter effect for "Saarathi"
-    const fullText = "Saarathi";
+    // Smooth typewriter effect for "Saarathii"
+    const fullText = "Saarathii";
     let currentIndex = 0;
     
     const typeWriter = () => {
@@ -25,7 +25,7 @@ export default function AnimatedName() {
   }, []);
 
   // Letter animations for the final state
-  const letters = "Saarathi".split("");
+  const letters = "Saarathii".split("");
   
   // Animation variants for each letter
   const containerVariants = {
@@ -96,7 +96,7 @@ export default function AnimatedName() {
           >
             {displayText}
             {/* Only show blinking cursor during typing */}
-            {displayText.length < 8 && (
+            {displayText.length < 9 && ( // Updated from 8 to 9 for the longer name
               <motion.span
                 animate={{ opacity: [1, 0.7, 1] }}
                 transition={{

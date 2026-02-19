@@ -48,7 +48,7 @@ export default function SignupLayout({ children }) {
     <PageWrapper>
       <Container>
         <Brand>
-          <Logo>Saarathi</Logo>
+          <Logo>Saarathii</Logo>
           <Tagline>With you. For you. Until you succeed.</Tagline>
         </Brand>
 

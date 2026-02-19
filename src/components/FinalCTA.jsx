@@ -101,12 +101,12 @@ export default function FinalCTA() {
           <Subtitle>
             You don’t have to figure everything out today.  
             You just need the right guidance to take the next step —
-            and Saarathi is here to walk with you until you succeed.
+            and Saarathii is here to walk with you until you succeed.
           </Subtitle>
 
           <ButtonRow>
             <PrimaryButton onClick={() => navigate("/signup")}>
-              Join Saarathi
+              Join Saarathii
             </PrimaryButton>
 
             <SecondaryButton>
