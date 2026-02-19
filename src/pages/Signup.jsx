@@ -158,7 +158,7 @@ export default function Signup() {
     return (
       <Layout>
         <Header>
-          <Title>Saarathi</Title>
+          <Title>Saarathii</Title>
           <Subtitle>Your personal academic guide</Subtitle>
         </Header>
         
