@@ -396,6 +396,7 @@ export default function SaarathiiChat() {
   const [error, setError] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [hasUserInteracted, setHasUserInteracted] = useState(false); // Track user interaction
   
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
@@ -417,11 +418,13 @@ export default function SaarathiiChat() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  // FIXED: Only focus when user has interacted with the chat
   useEffect(() => {
-    if (!isExpanded) {
-      inputRef.current?.focus();
+    // Only focus if user has explicitly interacted AND chat is not expanded
+    if (hasUserInteracted && !isExpanded && inputRef.current) {
+      inputRef.current.focus();
     }
-  }, [isExpanded]);
+  }, [isExpanded, hasUserInteracted]);
 
   // Close suggestions when clicking outside
   useEffect(() => {
@@ -487,6 +490,7 @@ export default function SaarathiiChat() {
   const handleSuggestionClick = (suggestion) => {
     setInput(suggestion);
     setShowSuggestions(false);
+    setHasUserInteracted(true); // Mark that user has interacted
     inputRef.current?.focus();
   };
 
@@ -497,6 +501,20 @@ export default function SaarathiiChat() {
       timestamp: new Date()
     }]);
     setError("");
+    setHasUserInteracted(false); // Reset interaction state
+  };
+
+  // Handle input click to mark interaction
+  const handleInputClick = () => {
+    setHasUserInteracted(true);
+  };
+
+  // Handle expand toggle with interaction tracking
+  const handleExpandToggle = () => {
+    setIsExpanded(!isExpanded);
+    if (!isExpanded) {
+      setHasUserInteracted(true); // User wants to expand, so they're interacting
+    }
   };
 
   const formatTime = (date) => {
@@ -526,7 +544,7 @@ export default function SaarathiiChat() {
                   <circle cx="12" cy="12" r="10" />
                 </svg>
               </IconButton>
-              <IconButton onClick={() => setIsExpanded(!isExpanded)} title={isExpanded ? "Minimize" : "Expand"}>
+              <IconButton onClick={handleExpandToggle} title={isExpanded ? "Minimize" : "Expand"}>
                 {isExpanded ? (
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M20 14H4M20 10H4" />
@@ -584,6 +602,7 @@ export default function SaarathiiChat() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={handleKeyPress}
+              onClick={handleInputClick} // Track click interaction
               placeholder="Type your question..."
               disabled={loading}
             />
@@ -603,8 +622,8 @@ export default function SaarathiiChat() {
       {!showSuggestions && (
         <SuggestButton onClick={() => setShowSuggestions(true)}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M8 12h8M8 8h4M8 16h6" />
-            <circle cx="12" cy="12" r="10" />
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            <path d="M8 10h.01M12 10h.01M16 10h.01" strokeWidth="3" />
           </svg>
           Ask Saarathii AI
         </SuggestButton>
