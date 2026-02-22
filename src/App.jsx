@@ -8,6 +8,7 @@ import Auth from "./pages/Auth";
 import Callback from "./pages/Callback";
 import SplashIntro from "./components/intro/SplashIntro";
 import Navbar from "./components/Navbar";
+import Mentorship from "./pages/Mentorship";
 
 export default function App() {
   // ✅ show splash once per tab/session
@@ -38,6 +39,7 @@ export default function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/auth" element={<Auth />} />
         <Route path="/callback" element={<Callback />} />
+        <Route path="/mentorship" element={<Mentorship />} />
       </Routes>
     </>
   );

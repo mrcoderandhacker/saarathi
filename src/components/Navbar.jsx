@@ -1,7 +1,8 @@
 import { motion } from "framer-motion";
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
-import logo from "../resources/logo.png"; // ✅ IMPORTANT (relative import)
+import { useNavigate, useLocation } from "react-router-dom";
+import { useState } from "react";
+import logo from "../resources/logo.png";
 
 /* ------------------ STYLES ------------------ */
 
@@ -53,10 +54,21 @@ const Links = styled.ul`
 const LinkItem = styled.li`
   cursor: pointer;
   transition: color 0.2s ease;
+  position: relative;
 
   &:hover {
     color: #111827;
   }
+`;
+
+const ActiveIndicator = styled.span`
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #111827;
+  border-radius: 2px;
 `;
 
 const Actions = styled.div`
@@ -94,50 +106,225 @@ const PrimaryButton = styled.button`
   &:hover {
     background: #1f2937;
   }
+
+  @media (max-width: 899px) {
+    padding: 0.4rem 1rem;
+    font-size: 0.8rem;
+  }
+`;
+
+/* ------------------ MOBILE MENU STYLES ------------------ */
+
+const MenuButton = styled.button`
+  display: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  color: #111827;
+
+  @media (max-width: 899px) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &:hover {
+    color: #4b5563;
+  }
+
+  svg {
+    width: 24px;
+    height: 24px;
+  }
+`;
+
+const MobileMenu = styled(motion.div)`
+  display: none;
+
+  @media (max-width: 899px) {
+    display: block;
+    position: fixed;
+    top: 72px;
+    left: 0;
+    right: 0;
+    background: white;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+    z-index: 99;
+    padding: 0.5rem 0;
+  }
+`;
+
+const MobileLinks = styled.ul`
+  list-style: none;
+  padding: 0.5rem 1.5rem;
+  margin: 0;
+`;
+
+const MobileLinkItem = styled.li`
+  padding: 1rem 0;
+  font-size: 1rem;
+  color: #4b5563;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+  transition: color 0.2s ease;
+  position: relative;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    color: #111827;
+  }
+`;
+
+const MobileActiveIndicator = styled.span`
+  position: absolute;
+  left: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 20px;
+  background: #111827;
+  border-radius: 3px;
+`;
+
+const MobileActions = styled.div`
+  display: flex;
+  gap: 0.8rem;
+  padding: 1rem 1.5rem 1.5rem 1.5rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.04);
+`;
+
+const MobileLoginButton = styled.button`
+  flex: 1;
+  background: transparent;
+  border: 1px solid #e5e7eb;
+  padding: 0.7rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  color: #4b5563;
+  cursor: pointer;
+
+  &:hover {
+    background: #f9fafb;
+    color: #111827;
+  }
+`;
+
+const MobilePrimaryButton = styled.button`
+  flex: 1;
+  background: #111827;
+  color: white;
+  border: none;
+  padding: 0.7rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  cursor: pointer;
+
+  &:hover {
+    background: #1f2937;
+  }
 `;
 
 /* ------------------ COMPONENT ------------------ */
 
 export default function Navbar({ animate = true }) {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const handleNavigation = (path) => {
+    navigate(path);
+    setIsMenuOpen(false);
+  };
 
   return (
-    <Header
-      initial={animate ? { y: -20, opacity: 0 } : undefined}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-    >
-      <Nav>
-        {/* LOGO + TEXT (linked with splash) */}
-        <LogoWrapper onClick={() => navigate("/")}>
-          <motion.img
-            src={logo}
-            alt="Saarathi Logo"
-            layoutId="saarathi-logo"
-            style={{ width: 34, height: 34 }}
-          />
+    <>
+      <Header
+        initial={animate ? { y: -20, opacity: 0 } : undefined}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+      >
+        <Nav>
+          {/* LOGO */}
+          <LogoWrapper onClick={() => handleNavigation("/")}>
+            <img
+              src={logo}
+              alt="Saarathi Logo"
+              style={{ width: 34, height: 34 }}
+            />
+            <LogoText>Saarathi</LogoText>
+          </LogoWrapper>
 
-          <motion.span layoutId="saarathi-text">
-            <LogoText>Saarathii</LogoText>
-          </motion.span>
-        </LogoWrapper>
+          {/* CENTER LINKS - Desktop */}
+          <Links>
+            <LinkItem onClick={() => handleNavigation("/mentorship")}>
+              Mentorship
+              {location.pathname === "/mentorship" && <ActiveIndicator />}
+            </LinkItem>
+            <LinkItem onClick={() => setIsMenuOpen(false)}>How It Works</LinkItem>
+            <LinkItem onClick={() => setIsMenuOpen(false)}>For Students</LinkItem>
+            <LinkItem onClick={() => setIsMenuOpen(false)}>Journal</LinkItem>
+          </Links>
 
-        {/* CENTER LINKS */}
-        <Links>
-          <LinkItem>Mentorship</LinkItem>
-          <LinkItem>How It Works</LinkItem>
-          <LinkItem>For Students</LinkItem>
-          <LinkItem>Journal</LinkItem>
-        </Links>
+          {/* ACTIONS - Desktop */}
+          <Actions>
+            <LoginButton>Login</LoginButton>
+            <PrimaryButton onClick={() => handleNavigation("/signup")}>
+              Get Started
+            </PrimaryButton>
 
-        {/* ACTIONS */}
-        <Actions>
-          <LoginButton>Login</LoginButton>
-          <PrimaryButton onClick={() => navigate("/signup")}>
-            Get Started
-          </PrimaryButton>
-        </Actions>
-      </Nav>
-    </Header>
+            {/* Mobile Menu Button */}
+            <MenuButton onClick={() => setIsMenuOpen(!isMenuOpen)}>
+              {isMenuOpen ? (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              ) : (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              )}
+            </MenuButton>
+          </Actions>
+        </Nav>
+      </Header>
+
+      {/* Mobile Menu */}
+      {isMenuOpen && (
+        <MobileMenu
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.2 }}
+        >
+          <MobileLinks>
+            <MobileLinkItem onClick={() => handleNavigation("/mentorship")}>
+              Mentorship
+              {location.pathname === "/mentorship" && <MobileActiveIndicator />}
+            </MobileLinkItem>
+            <MobileLinkItem onClick={() => setIsMenuOpen(false)}>
+              How It Works
+            </MobileLinkItem>
+            <MobileLinkItem onClick={() => setIsMenuOpen(false)}>
+              For Students
+            </MobileLinkItem>
+            <MobileLinkItem onClick={() => setIsMenuOpen(false)}>
+              Journal
+            </MobileLinkItem>
+          </MobileLinks>
+
+          <MobileActions>
+            <MobileLoginButton>Login</MobileLoginButton>
+            <MobilePrimaryButton onClick={() => handleNavigation("/signup")}>
+              Get Started
+            </MobilePrimaryButton>
+          </MobileActions>
+        </MobileMenu>
+      )}
+    </>
   );
 }
