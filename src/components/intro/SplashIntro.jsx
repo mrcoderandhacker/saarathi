@@ -10,7 +10,7 @@ export default function SplashIntro({ onFinish }) {
     const timeline = [
       // Logo appears from center (reverse of zoom)
       setTimeout(() => setZoomPhase(0), 1000), // After logo appears
-      
+
       // Initial display: 2 seconds after logo appears
       setTimeout(() => setZoomPhase(1), 3000), // Start gather effect
       setTimeout(() => setZoomPhase(2), 3500), // Start zoom
@@ -46,7 +46,7 @@ export default function SplashIntro({ onFinish }) {
           <motion.div
             initial={{ clipPath: "circle(150% at 50% 50%)" }}
             animate={{ clipPath: "circle(0% at 50% 50%)" }}
-            transition={{ 
+            transition={{
               duration: 1.2,
               ease: [0.87, 0, 0.13, 1],
             }}
@@ -57,16 +57,16 @@ export default function SplashIntro({ onFinish }) {
               zIndex: 5,
             }}
           />
-          
+
           {/* Reverse tunnel effect */}
           <motion.div
             initial={{ scale: 50, opacity: 0, borderRadius: "0%" }}
-            animate={{ 
-              scale: 0.1, 
+            animate={{
+              scale: 0.1,
               opacity: [0, 1, 1, 0],
               borderRadius: ["0%", "0%", "100%", "100%"],
             }}
-            transition={{ 
+            transition={{
               duration: 1.2,
               ease: "easeInOut",
             }}
@@ -82,14 +82,14 @@ export default function SplashIntro({ onFinish }) {
               mixBlendMode: "screen",
             }}
           />
-          
+
           {/* Reverse particles */}
           {[...Array(8)].map((_, i) => (
             <motion.div
               key={i}
               initial={{
-                x: window.innerWidth / 2 + Math.cos(i * 45 * Math.PI/180) * 200,
-                y: window.innerHeight / 2 + Math.sin(i * 45 * Math.PI/180) * 200,
+                x: window.innerWidth / 2 + Math.cos(i * 45 * Math.PI / 180) * 200,
+                y: window.innerHeight / 2 + Math.sin(i * 45 * Math.PI / 180) * 200,
                 scale: 0,
                 opacity: 0,
               }}
@@ -126,8 +126,8 @@ export default function SplashIntro({ onFinish }) {
             <motion.div
               key={i}
               initial={{
-                x: Math.random() * window.innerWidth,
-                y: Math.random() * window.innerHeight,
+                x: 0,
+                y: 0,
                 scale: 0,
                 opacity: 0,
               }}
@@ -167,27 +167,27 @@ export default function SplashIntro({ onFinish }) {
         {/* LOGO with elegant appear and zoom */}
         <motion.div
           initial={{ scale: 0, opacity: 0 }}
-          animate={{ 
-            scale: zoomPhase === -1 ? 0.1 : 
-                   zoomPhase === 0 ? 1 : 
-                   zoomPhase === 1 ? 1.1 : 
-                   zoomPhase === 2 ? 0 : 0,
-            opacity: zoomPhase === -1 ? 0 : 
-                     zoomPhase === 0 ? 1 : 
-                     zoomPhase === 1 ? 1 : 
-                     zoomPhase === 2 ? 0 : 0,
-            y: zoomPhase === -1 ? 0 : 
-               zoomPhase === 0 ? 0 : 
-               zoomPhase === 1 ? -5 : 0,
+          animate={{
+            scale: zoomPhase === -1 ? 0.1 :
+              zoomPhase === 0 ? 1 :
+                zoomPhase === 1 ? 1.1 :
+                  zoomPhase === 2 ? 0 : 0,
+            opacity: zoomPhase === -1 ? 0 :
+              zoomPhase === 0 ? 1 :
+                zoomPhase === 1 ? 1 :
+                  zoomPhase === 2 ? 0 : 0,
+            y: zoomPhase === -1 ? 0 :
+              zoomPhase === 0 ? 0 :
+                zoomPhase === 1 ? -5 : 0,
             rotate: zoomPhase === 1 ? 5 : 0,
           }}
-          transition={{ 
-            duration: zoomPhase === -1 ? 1.2 : 
-                     zoomPhase === 1 ? 0.8 : 
-                     zoomPhase === 2 ? 1.5 : 0.8,
-            ease: zoomPhase === -1 ? [0.87, 0, 0.13, 1] : 
-                  zoomPhase === 1 ? "easeOut" : 
-                  zoomPhase === 2 ? [0.87, 0, 0.13, 1] : 
+          transition={{
+            duration: zoomPhase === -1 ? 1.2 :
+              zoomPhase === 1 ? 0.8 :
+                zoomPhase === 2 ? 1.5 : 0.8,
+            ease: zoomPhase === -1 ? [0.87, 0, 0.13, 1] :
+              zoomPhase === 1 ? "easeOut" :
+                zoomPhase === 2 ? [0.87, 0, 0.13, 1] :
                   [0.34, 1.56, 0.64, 1],
           }}
           style={{
@@ -242,21 +242,21 @@ export default function SplashIntro({ onFinish }) {
         {zoomPhase >= 0 && (
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ 
-              opacity: zoomPhase === 0 ? 1 : 
-                       zoomPhase === 1 ? 1 : 
-                       zoomPhase === 2 ? 0 : 0,
-              scale: zoomPhase === 0 ? 1 : 
-                     zoomPhase === 1 ? 1.05 : 
-                     zoomPhase === 2 ? 0 : 0,
+            animate={{
+              opacity: zoomPhase === 0 ? 1 :
+                zoomPhase === 1 ? 1 :
+                  zoomPhase === 2 ? 0 : 0,
+              scale: zoomPhase === 0 ? 1 :
+                zoomPhase === 1 ? 1.05 :
+                  zoomPhase === 2 ? 0 : 0,
               y: zoomPhase === 1 ? -5 : 0,
             }}
-            transition={{ 
-              duration: zoomPhase === 0 ? 0.6 : 
-                       zoomPhase === 2 ? 1.5 : 0.5,
+            transition={{
+              duration: zoomPhase === 0 ? 0.6 :
+                zoomPhase === 2 ? 1.5 : 0.5,
               delay: zoomPhase === 0 ? 0.3 : 0,
-              ease: zoomPhase === 0 ? [0.34, 1.56, 0.64, 1] : 
-                    zoomPhase === 2 ? [0.87, 0, 0.13, 1] : "easeOut",
+              ease: zoomPhase === 0 ? [0.34, 1.56, 0.64, 1] :
+                zoomPhase === 2 ? [0.87, 0, 0.13, 1] : "easeOut",
             }}
             style={{
               position: "relative",
@@ -271,12 +271,12 @@ export default function SplashIntro({ onFinish }) {
       {zoomPhase === 2 && (
         <motion.div
           initial={{ scale: 0.1, opacity: 0, borderRadius: "100%" }}
-          animate={{ 
-            scale: 50, 
+          animate={{
+            scale: 50,
             opacity: [0, 1, 1, 0],
             borderRadius: ["100%", "100%", "0%", "0%"],
           }}
-          transition={{ 
+          transition={{
             duration: 1.5,
             ease: "easeInOut",
           }}
@@ -299,7 +299,7 @@ export default function SplashIntro({ onFinish }) {
         <motion.div
           initial={{ clipPath: "circle(0% at 50% 50%)" }}
           animate={{ clipPath: "circle(150% at 50% 50%)" }}
-          transition={{ 
+          transition={{
             duration: 1.2,
             delay: 0.3,
             ease: "easeInOut",
@@ -326,8 +326,8 @@ export default function SplashIntro({ onFinish }) {
                 opacity: 0.8,
               }}
               animate={{
-                x: window.innerWidth / 2 + Math.cos(i * 45 * Math.PI/180) * 200,
-                y: window.innerHeight / 2 + Math.sin(i * 45 * Math.PI/180) * 200,
+                x: window.innerWidth / 2 + Math.cos(i * 45 * Math.PI / 180) * 200,
+                y: window.innerHeight / 2 + Math.sin(i * 45 * Math.PI / 180) * 200,
                 scale: 0,
                 opacity: 0,
               }}
@@ -353,7 +353,7 @@ export default function SplashIntro({ onFinish }) {
 
       {/* Ambient light pulses */}
       <motion.div
-        animate={{ 
+        animate={{
           opacity: [0.1, 0.3, 0.1],
         }}
         transition={{

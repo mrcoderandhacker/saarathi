@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import styled from "styled-components";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -75,6 +75,7 @@ export default function CardCarousel({
   ],
 }) {
   const [index, setIndex] = useState(1);
+  const intervalRef = useRef(null);
 
   const handlePrev = () => {
     setIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
@@ -83,6 +84,17 @@ export default function CardCarousel({
   const handleNext = () => {
     setIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
   };
+
+  // 🔥 AUTO CHANGE EVERY 3 SECONDS
+  useEffect(() => {
+    intervalRef.current = setInterval(() => {
+      setIndex((prev) =>
+        prev === images.length - 1 ? 0 : prev + 1
+      );
+    }, 3000);
+
+    return () => clearInterval(intervalRef.current);
+  }, [images.length]);
 
   const getStyle = (i) => {
     const position = (i - index + images.length) % images.length;

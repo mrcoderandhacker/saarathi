@@ -9,6 +9,11 @@ import Callback from "./pages/Callback";
 import SplashIntro from "./components/intro/SplashIntro";
 import Navbar from "./components/Navbar";
 import Mentorship from "./pages/Mentorship";
+import HowitWorks from "./pages/HowItWorks";
+import CollegeExplorer from "./pages/CollegeExplorer";
+import EngineeringColleges from "./pages/EngineeringColleges";
+import Dashboard from "./pages/Dashboard";
+import Login from "./pages/Login";
 
 export default function App() {
   // ✅ show splash once per tab/session
@@ -40,6 +45,12 @@ export default function App() {
         <Route path="/auth" element={<Auth />} />
         <Route path="/callback" element={<Callback />} />
         <Route path="/mentorship" element={<Mentorship />} />
+        <Route path="/how-it-works" element={<HowitWorks />} />
+        <Route path="/college-explorer" element={<CollegeExplorer />} />
+        <Route path="/college-explorer/engineering" element={<EngineeringColleges />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/auth" element={<Auth />} />
       </Routes>
     </>
   );

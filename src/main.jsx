@@ -4,14 +4,17 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import { GlobalStyles } from "./styles/GlobalStyles";
 import { AuthProvider } from "./context/AuthContext";
+import { HelmetProvider } from "react-helmet-async";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <BrowserRouter>
-      <AuthProvider>
-        <GlobalStyles />
-        <App />
-      </AuthProvider>
-    </BrowserRouter>
+    <HelmetProvider>
+      <BrowserRouter>
+        <AuthProvider>
+          <GlobalStyles />
+          <App />
+        </AuthProvider>
+      </BrowserRouter>
+    </HelmetProvider>
   </React.StrictMode>
 );

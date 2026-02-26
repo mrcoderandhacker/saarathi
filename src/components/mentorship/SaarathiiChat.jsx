@@ -35,7 +35,6 @@ const ChatContainer = styled.div`
     width: ${props => props.isExpanded ? '95%' : '100%'};
   }
 `;
-
 const Overlay = styled.div`
   position: fixed;
   top: 0;
@@ -397,7 +396,7 @@ export default function SaarathiiChat() {
   const [isExpanded, setIsExpanded] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [hasUserInteracted, setHasUserInteracted] = useState(false); // Track user interaction
-  
+
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
   const modalRef = useRef(null);
@@ -451,12 +450,12 @@ export default function SaarathiiChat() {
   const handleSend = async () => {
     if (!input.trim() || loading) return;
 
-    const userMessage = { 
-      text: input, 
+    const userMessage = {
+      text: input,
       isUser: true,
       timestamp: new Date()
     };
-    
+
     setMessages(prev => [...prev, userMessage]);
     setInput("");
     setLoading(true);
@@ -464,13 +463,13 @@ export default function SaarathiiChat() {
 
     try {
       const response = await sendMessageToSaarathii(input, messages);
-      
-      const aiMessage = { 
-        text: response, 
+
+      const aiMessage = {
+        text: response,
         isUser: false,
         timestamp: new Date()
       };
-      
+
       setMessages(prev => [...prev, aiMessage]);
       setShowSuggestions(false);
     } catch (err) {
@@ -518,10 +517,10 @@ export default function SaarathiiChat() {
   };
 
   const formatTime = (date) => {
-    return date.toLocaleTimeString('en-US', { 
-      hour: '2-digit', 
+    return date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
       minute: '2-digit',
-      hour12: true 
+      hour12: true
     });
   };
 
@@ -529,7 +528,7 @@ export default function SaarathiiChat() {
     <>
       <ChatWrapper>
         <Overlay isVisible={isExpanded} onClick={() => setIsExpanded(false)} />
-        
+
         <ChatContainer isExpanded={isExpanded}>
           <ChatHeader>
             <Avatar>🧘</Avatar>
@@ -575,7 +574,7 @@ export default function SaarathiiChat() {
                 </MessageBubble>
               </MessageWrapper>
             ))}
-            
+
             {loading && (
               <MessageWrapper isUser={false}>
                 <TypingIndicator>
@@ -585,14 +584,14 @@ export default function SaarathiiChat() {
                 </TypingIndicator>
               </MessageWrapper>
             )}
-            
+
             {error && (
               <ErrorMessage>
                 <span>⚠️</span>
                 {error}
               </ErrorMessage>
             )}
-            
+
             <div ref={messagesEndRef} />
           </MessagesContainer>
 
@@ -606,8 +605,8 @@ export default function SaarathiiChat() {
               placeholder="Type your question..."
               disabled={loading}
             />
-            <SendButton 
-              onClick={handleSend} 
+            <SendButton
+              onClick={handleSend}
               disabled={loading || !input.trim()}
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

@@ -1,7 +1,8 @@
 import { motion } from "framer-motion";
 import styled from "styled-components";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "../lib/supabase";
 import logo from "../resources/logo.png";
 
 /* ------------------ STYLES ------------------ */
@@ -113,7 +114,7 @@ const PrimaryButton = styled.button`
   }
 `;
 
-/* ------------------ MOBILE MENU STYLES ------------------ */
+/* ------------------ MOBILE MENU ------------------ */
 
 const MenuButton = styled.button`
   display: none;
@@ -235,6 +236,21 @@ export default function Navbar({ animate = true }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    // Check active session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const handleNavigation = (path) => {
     navigate(path);
@@ -251,33 +267,56 @@ export default function Navbar({ animate = true }) {
         <Nav>
           {/* LOGO */}
           <LogoWrapper onClick={() => handleNavigation("/")}>
-            <img
-              src={logo}
-              alt="Saarathi Logo"
-              style={{ width: 34, height: 34 }}
-            />
+            <img src={logo} alt="Saarathi Logo" style={{ width: 34, height: 34 }} />
             <LogoText>Saarathi</LogoText>
           </LogoWrapper>
 
-          {/* CENTER LINKS - Desktop */}
+          {/* DESKTOP LINKS */}
           <Links>
+            <LinkItem onClick={() => handleNavigation("/")}>
+              Home
+              {location.pathname === "/" && <ActiveIndicator />}
+            </LinkItem>
+
             <LinkItem onClick={() => handleNavigation("/mentorship")}>
               Mentorship
               {location.pathname === "/mentorship" && <ActiveIndicator />}
             </LinkItem>
-            <LinkItem onClick={() => setIsMenuOpen(false)}>How It Works</LinkItem>
-            <LinkItem onClick={() => setIsMenuOpen(false)}>For Students</LinkItem>
-            <LinkItem onClick={() => setIsMenuOpen(false)}>Journal</LinkItem>
+
+            <LinkItem onClick={() => handleNavigation("/college-explorer")}>
+              Explore Colleges
+              {location.pathname === "/college-explorer" && <ActiveIndicator />}
+            </LinkItem>
+
+            <LinkItem onClick={() => handleNavigation("/how-it-works")}>
+              How It Works
+              {location.pathname === "/how-it-works" && <ActiveIndicator />}
+            </LinkItem>
+
+            <LinkItem onClick={() => setIsMenuOpen(false)}>
+              For Students
+            </LinkItem>
+
+            <LinkItem onClick={() => setIsMenuOpen(false)}>
+              Journal
+            </LinkItem>
           </Links>
 
-          {/* ACTIONS - Desktop */}
+          {/* ACTIONS */}
           <Actions>
-            <LoginButton>Login</LoginButton>
-            <PrimaryButton onClick={() => handleNavigation("/signup")}>
-              Get Started
-            </PrimaryButton>
+            {user ? (
+              <PrimaryButton onClick={() => handleNavigation("/dashboard")}>
+                Dashboard
+              </PrimaryButton>
+            ) : (
+              <>
+                <LoginButton onClick={() => handleNavigation("/login")}>Login</LoginButton>
+                <PrimaryButton onClick={() => handleNavigation("/signup")}>
+                  Get Started
+                </PrimaryButton>
+              </>
+            )}
 
-            {/* Mobile Menu Button */}
             <MenuButton onClick={() => setIsMenuOpen(!isMenuOpen)}>
               {isMenuOpen ? (
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -293,35 +332,56 @@ export default function Navbar({ animate = true }) {
         </Nav>
       </Header>
 
-      {/* Mobile Menu */}
+      {/* MOBILE MENU */}
       {isMenuOpen && (
         <MobileMenu
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.2 }}
         >
           <MobileLinks>
+            <MobileLinkItem onClick={() => handleNavigation("/")}>
+              Home
+              {location.pathname === "/" && <MobileActiveIndicator />}
+            </MobileLinkItem>
+
             <MobileLinkItem onClick={() => handleNavigation("/mentorship")}>
               Mentorship
               {location.pathname === "/mentorship" && <MobileActiveIndicator />}
             </MobileLinkItem>
-            <MobileLinkItem onClick={() => setIsMenuOpen(false)}>
-              How It Works
+
+            <MobileLinkItem onClick={() => handleNavigation("/college-explorer")}>
+              Explore Colleges
+              {location.pathname === "/college-explorer" && <MobileActiveIndicator />}
             </MobileLinkItem>
+
+            <MobileLinkItem onClick={() => handleNavigation("/how-it-works")}>
+              How It Works
+              {location.pathname === "/how-it-works" && <MobileActiveIndicator />}
+            </MobileLinkItem>
+
             <MobileLinkItem onClick={() => setIsMenuOpen(false)}>
               For Students
             </MobileLinkItem>
+
             <MobileLinkItem onClick={() => setIsMenuOpen(false)}>
               Journal
             </MobileLinkItem>
           </MobileLinks>
 
           <MobileActions>
-            <MobileLoginButton>Login</MobileLoginButton>
-            <MobilePrimaryButton onClick={() => handleNavigation("/signup")}>
-              Get Started
-            </MobilePrimaryButton>
+            {user ? (
+              <MobilePrimaryButton onClick={() => handleNavigation("/dashboard")}>
+                Dashboard
+              </MobilePrimaryButton>
+            ) : (
+              <>
+                <MobileLoginButton onClick={() => handleNavigation("/login")}>Login</MobileLoginButton>
+                <MobilePrimaryButton onClick={() => handleNavigation("/signup")}>
+                  Get Started
+                </MobilePrimaryButton>
+              </>
+            )}
           </MobileActions>
         </MobileMenu>
       )}

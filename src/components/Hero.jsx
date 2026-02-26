@@ -2,18 +2,26 @@ import { motion } from "framer-motion";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import CardCarousel from "./CardCarousel";
+import mainHeroBg from "../resources/mainherobg.png"; // adjust path if needed
 
 /* ------------------ STYLES ------------------ */
 
 const HeroSection = styled.section`
   position: relative;
   overflow: hidden;
-  background: linear-gradient(
-    to bottom,
-    #e8f0ff 0%,
-    #f4f7ff 40%,
-    #faf8f2 100%
-  );
+
+  background: 
+    linear-gradient(
+      to bottom,
+      rgba(232, 240, 255, 0.5) 0%,
+      rgba(244, 247, 255, 0.5) 40%,
+      rgba(250, 248, 242, 0.5) 100%
+    ),
+    url(${mainHeroBg});
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 `;
 
 const Container = styled.div`
@@ -37,16 +45,6 @@ const TextBlock = styled(motion.div)`
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-`;
-
-const Badge = styled.span`
-  align-self: flex-start;
-  background: #e6f4ea;
-  color: #137333;
-  font-size: 0.85rem;
-  padding: 0.4rem 0.8rem;
-  border-radius: 999px;
-  font-weight: 500;
 `;
 
 const Heading = styled.h1`
@@ -80,16 +78,18 @@ const ButtonRow = styled.div`
 `;
 
 const PrimaryButton = styled.button`
-  background: #111827;
+  background: #ee5a15;
   color: white;
   border: none;
   padding: 0.75rem 1.6rem;
   border-radius: 999px;
   font-size: 0.95rem;
-  transition: background 0.25s ease;
+  cursor: pointer;
+  transition: all 0.25s ease;
 
   &:hover {
     background: #1f2937;
+    transform: translateY(-2px);
   }
 `;
 
@@ -100,7 +100,8 @@ const SecondaryButton = styled.button`
   padding: 0.75rem 1.6rem;
   border-radius: 999px;
   font-size: 0.95rem;
-  transition: background 0.25s ease;
+  cursor: pointer;
+  transition: all 0.25s ease;
 
   &:hover {
     background: #f3f4f6;
@@ -127,8 +128,6 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            <Badge>🎓 Student Mentorship Platform</Badge>
-
             <Heading>
               With you. For you.
               <br />
@@ -161,7 +160,11 @@ export default function Hero() {
           <VisualBlock
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+            transition={{
+              duration: 0.8,
+              ease: "easeOut",
+              delay: 0.2,
+            }}
           >
             <CardCarousel />
           </VisualBlock>
