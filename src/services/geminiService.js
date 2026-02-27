@@ -1,15 +1,10 @@
 // src/services/geminiService.js
 
-const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
-
-// Use the exact model names from your list
-const MODEL_NAME = "models/gemini-2.5-flash"; // Fast and efficient
-// const MODEL_NAME = "models/gemini-2.5-pro"; // Use this for more detailed responses
-// const MODEL_NAME = "models/gemini-pro-latest"; // Alternative
+// Using the established Cloudflare proxy for secure API calls
+const PROXY_URL = import.meta.env.VITE_SUPABASE_URL + "/ai";
 
 console.log("🚀 Saarathii AI Loading...");
-console.log("✅ API Key exists:", !!API_KEY);
-console.log("✅ Using model:", MODEL_NAME);
+console.log("✅ Using unified proxy:", PROXY_URL);
 
 export const SAARATHII_SYSTEM_PROMPT = `You are Saarathii, a compassionate and knowledgeable career mentor for Indian students in grades 9-12. Your role is to guide students through academic and career decisions with wisdom, patience, and personalized advice.
 
@@ -53,7 +48,7 @@ class RateLimiter {
   canMakeRequest() {
     const now = Date.now();
     this.requests = this.requests.filter(time => now - time < this.timeWindow);
-    
+
     if (this.requests.length < this.maxRequests) {
       this.requests.push(now);
       return true;
@@ -71,10 +66,9 @@ class RateLimiter {
 
 const rateLimiter = new RateLimiter();
 
-// Main function to send messages
 export async function sendMessageToSaarathii(userMessage, chatHistory = []) {
-  if (!API_KEY) {
-    throw new Error("❌ API key is missing. Please check your .env file.");
+  if (!PROXY_URL) {
+    throw new Error("❌ Proxy URL is missing. Please check VITE_SUPABASE_URL in your .env file.");
   }
 
   if (!rateLimiter.canMakeRequest()) {
@@ -135,17 +129,14 @@ export async function sendMessageToSaarathii(userMessage, chatHistory = []) {
 
     console.log("📤 Sending to Gemini...");
 
-    // Use the exact model name from your list
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/${MODEL_NAME}:generateContent?key=${API_KEY}`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestBody)
-      }
-    );
+    // Forward everything via the secure Cloudflare Worker proxy
+    const response = await fetch(PROXY_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestBody)
+    });
 
     if (!response.ok) {
       const errorData = await response.json();
@@ -157,7 +148,7 @@ export async function sendMessageToSaarathii(userMessage, chatHistory = []) {
     console.log("✅ Response received");
 
     const aiResponse = data.candidates?.[0]?.content?.parts?.[0]?.text;
-    
+
     if (!aiResponse) {
       return "I received an empty response. Please try again.";
     }
@@ -174,21 +165,18 @@ export async function sendMessageToSaarathii(userMessage, chatHistory = []) {
 export async function testSaarathii() {
   try {
     console.log("🧪 Testing Saarathii API...");
-    
-    const testResponse = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/${MODEL_NAME}:generateContent?key=${API_KEY}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{
-              text: "Say 'Hello, I am Saarathii' in 5 words"
-            }]
+
+    const testResponse = await fetch(PROXY_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{
+          parts: [{
+            text: "Say 'Hello, I am Saarathii' in 5 words"
           }]
-        })
-      }
-    );
+        }]
+      })
+    });
 
     const data = await testResponse.json();
     console.log("✅ Test successful!", data);

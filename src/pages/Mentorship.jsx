@@ -6,7 +6,6 @@ import MentorshipHero from "../components/mentorship/MentorshipHero";
 import MentorshipProblem from "../components/mentorship/MentorshipProblem";
 import MentorshipRole from "../components/mentorship/MentorshipRole";
 import MentorshipTimeline from "../components/mentorship/MentorshipTimeline";
-import SaarathiiChat from "../components/mentorship/SaarathiiChat";
 import MentorshipGoldCTA from "../components/mentorship/MentorshipGoldCTA";
 
 import styled from "styled-components";
@@ -71,15 +70,25 @@ export default function Mentorship() {
         {/* 4. How the mentor relationship works — timeline */}
         <MentorshipTimeline />
 
-        {/* 5. AI chat — try it now */}
+        {/* 5. AI chat CTA — point them to the bottom right widget */}
         <ChatSection id="ai-chat-section">
           <ChatInner>
             <ChatLabel>Free for everyone</ChatLabel>
             <ChatTitle>Talk to Saarathii — Your AI Guide</ChatTitle>
             <ChatSub>
-              Get instant guidance for your academic journey. Ask anything about stream selection, exam prep, or career paths — no login needed.
+              Get instant guidance for your academic journey. Ask anything about stream selection, exam prep, or career paths.
             </ChatSub>
-            <SaarathiiChat />
+
+            <div style={{
+              background: "#f8fafc", border: "1px dashed #cbd5e1", borderRadius: "16px",
+              padding: "2rem", display: "flex", flexDirection: "column", alignItems: "center", gap: "1rem"
+            }}>
+              <div style={{ fontSize: "1.8rem" }}>💬 👇</div>
+              <p style={{ color: "#475569", fontWeight: "500", textAlign: "center", margin: 0 }}>
+                Click the <strong>"Talk to AI Mentor"</strong> button in the bottom right corner to start chatting instantly!
+              </p>
+            </div>
+
           </ChatInner>
         </ChatSection>
 

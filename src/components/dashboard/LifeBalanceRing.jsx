@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../lib/supabase";
+import { ChartWidgetSkeleton } from "./Skeletons";
 
 /* ---- STYLES ---- */
 const Card = styled(motion.div)`

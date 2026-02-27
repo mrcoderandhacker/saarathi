@@ -1,8 +1,11 @@
+import { useState, useMemo } from "react";
 import styled from "styled-components";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { Search, MapPin, Award, BookmarkPlus, BookmarkCheck, Filter } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { supabase } from "../lib/supabase";
 
 const Layout = styled.div`
   min-height: 100vh;
@@ -149,11 +152,320 @@ const ComingSoonBanner = styled.div`
   padding: 1.2rem 1.5rem;
   font-size: 0.85rem;
   color: #92400e;
-  margin-bottom: 2rem;
+  margin-bottom: 3rem;
   display: flex;
   align-items: center;
   gap: 0.6rem;
 `;
+
+// --- NEW SEARCH & DATABASE STYLES --- //
+
+const DatabaseSection = styled.div`
+  margin-top: 4rem;
+  padding-top: 3rem;
+  border-top: 1px solid #e2e8f0;
+`;
+
+const LayoutSplit = styled.div`
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+  flex-wrap: wrap;
+
+  @media (max-width: 992px) {
+    flex-direction: column;
+  }
+`;
+
+const Sidebar = styled.aside`
+  flex: 0 0 280px;
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  border: 1px solid #e2e8f0;
+  position: sticky;
+  top: 100px;
+  
+  @media (max-width: 992px) {
+    flex: 1 1 100%;
+    width: 100%;
+    position: static;
+  }
+`;
+
+const SearchContainer = styled.div`
+  position: relative;
+  margin-bottom: 2rem;
+`;
+
+const SearchInput = styled.input`
+  width: 100%;
+  padding: 1rem 1rem 1rem 3rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: all 0.2s;
+
+  &:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 4px rgba(99,102,241,0.1);
+    outline: none;
+  }
+`;
+
+const SearchIconWrapper = styled.div`
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+`;
+
+const FilterGroup = styled.div`
+  margin-bottom: 1.5rem;
+`;
+
+const FilterTitle = styled.h4`
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #334155;
+  margin-bottom: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`;
+
+const FilterLabel = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: #475569;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+  
+  input {
+    accent-color: #6366f1;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+  }
+`;
+
+const ResultsArea = styled.div`
+  flex: 1;
+  min-width: 0;
+`;
+
+const ResultsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+`;
+
+const DetailedCollegeCard = styled(motion.div)`
+  background: white;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  padding: 1.2rem;
+  transition: all 0.2s;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  &:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    transform: translateY(-2px);
+  }
+`;
+
+const SaveBtn = styled(motion.button)`
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: ${p => p.saved ? '#ec4899' : 'rgba(241, 245, 249, 0.8)'};
+  color: ${p => p.saved ? 'white' : '#64748b'};
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  backdrop-filter: blur(4px);
+  
+  &:hover {
+    background: ${p => p.saved ? '#db2777' : '#e2e8f0'};
+    color: ${p => p.saved ? 'white' : '#0f172a'};
+  }
+`;
+
+const CTagsContainer = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+`;
+
+const CTag = styled.span`
+  background: ${p => p.bg || '#f1f5f9'};
+  color: ${p => p.color || '#475569'};
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+`;
+
+const CTitle = styled.h3`
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.4rem;
+  line-height: 1.3;
+  padding-right: 2rem;
+`;
+
+const CLocation = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: #64748b;
+  font-size: 0.85rem;
+  margin-bottom: 1.2rem;
+`;
+
+const CMetaContainer = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+  margin-top: auto;
+  padding-top: 1.2rem;
+  border-top: 1px dashed #e2e8f0;
+`;
+
+const CMetaBlock = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const CMetaLabel = styled.span`
+  font-size: 0.7rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+`;
+
+const CMetaValue = styled.span`
+  font-size: 0.9rem;
+  color: #0f172a;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+`;
+
+const EmptyResults = styled.div`
+  text-align: center;
+  padding: 4rem 2rem;
+  background: white;
+  border-radius: 16px;
+  border: 1px dashed #cbd5e1;
+  color: #64748b;
+  
+  h3 { color: #0f172a; margin-top: 1rem; margin-bottom: 0.5rem; }
+`;
+
+// --- MOCK DATABASE ENTRIES --- //
+const MOCK_DB = [
+  {
+    id: "c1",
+    name: "IIT Bombay - Indian Institute of Technology",
+    location: "Mumbai, Maharashtra",
+    stream: "Engineering",
+    type: "Government",
+    nirf: 3,
+    exam: "JEE Advanced",
+    acceptance: "1.2%"
+  },
+  {
+    id: "c2",
+    name: "BITS Pilani",
+    location: "Pilani, Rajasthan",
+    stream: "Engineering",
+    type: "Private",
+    nirf: 25,
+    exam: "BITSAT",
+    acceptance: "4.5%"
+  },
+  {
+    id: "c3",
+    name: "AIIMS Delhi",
+    location: "New Delhi",
+    stream: "Medical",
+    type: "Government",
+    nirf: 1,
+    exam: "NEET UG",
+    acceptance: "0.1%"
+  },
+  {
+    id: "c4",
+    name: "National Law School of India University (NLSIU)",
+    location: "Bengaluru, Karnataka",
+    stream: "Law",
+    type: "Government",
+    nirf: 1,
+    exam: "CLAT",
+    acceptance: "2%"
+  },
+  {
+    id: "c5",
+    name: "National Institute of Design (NID)",
+    location: "Ahmedabad, Gujarat",
+    stream: "Design",
+    type: "Government",
+    nirf: 1, // Custom
+    exam: "NID DAT",
+    acceptance: "1.5%"
+  },
+  {
+    id: "c6",
+    name: "IIM Ahmedabad",
+    location: "Ahmedabad, Gujarat",
+    stream: "Business",
+    type: "Government",
+    nirf: 1,
+    exam: "CAT",
+    acceptance: "1%"
+  },
+  {
+    id: "c7",
+    name: "Vellore Institute of Technology (VIT)",
+    location: "Vellore, Tamil Nadu",
+    stream: "Engineering",
+    type: "Private",
+    nirf: 11,
+    exam: "VITEEE",
+    acceptance: "25%"
+  },
+  {
+    id: "c8",
+    name: "Christian Medical College (CMC)",
+    location: "Vellore, Tamil Nadu",
+    stream: "Medical",
+    type: "Private",
+    nirf: 3,
+    exam: "NEET UG",
+    acceptance: "4%"
+  }
+];
 
 const CATEGORIES = [
   {
@@ -225,10 +537,66 @@ const CATEGORIES = [
 
 export default function CollegeExplorer() {
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedStream, setSelectedStream] = useState("All");
+  const [selectedType, setSelectedType] = useState("All");
+  const [savedIds, setSavedIds] = useState(new Set());
+  const [saving, setSaving] = useState(false);
 
+  // Note: We don't block render on auth check here, we just use it for the Save button.
+  // In a real prod environment, we would fetch saved colleges on load.
   const handleCardClick = (cat) => {
     if (cat.route) navigate(cat.route);
   };
+
+  const handleSaveToggle = async (id, name) => {
+    if (saving) return;
+    setSaving(true);
+
+    // Optimistic UI
+    const nextSaved = new Set(savedIds);
+    const isSaved = nextSaved.has(id);
+
+    if (isSaved) nextSaved.delete(id);
+    else nextSaved.add(id);
+    setSavedIds(nextSaved);
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        alert("Please log in to save colleges.");
+        // Revert optimistic on fail
+        const rev = new Set(nextSaved);
+        if (isSaved) rev.add(id); else rev.delete(id);
+        setSavedIds(rev);
+        setSaving(false);
+        return;
+      }
+
+      if (isSaved) {
+        // Delete logic (assuming name is unique for this mock setup)
+        await supabase.from("saved_colleges")
+          .delete()
+          .eq("user_id", session.user.id)
+          .eq("name", name);
+      } else {
+        // Insert logic
+        await supabase.from("saved_colleges")
+          .insert({ user_id: session.user.id, name: name });
+      }
+    } catch (e) { console.error(e); }
+    setSaving(false);
+  };
+
+  const filteredColleges = useMemo(() => {
+    return MOCK_DB.filter(c => {
+      const matchSearch = c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        c.location.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchStream = selectedStream === "All" || c.stream === selectedStream;
+      const matchType = selectedType === "All" || c.type === selectedType;
+      return matchSearch && matchStream && matchType;
+    });
+  }, [searchQuery, selectedStream, selectedType]);
 
   return (
     <Layout>
@@ -283,9 +651,11 @@ export default function CollegeExplorer() {
             </CategoryCard>
           ))}
         </CategoryGrid>
+
+        {/* DATABASE SECTION REMOVED PER USER REQUEST */}
       </Container>
 
       <Footer />
-    </Layout>
+    </Layout >
   );
 }

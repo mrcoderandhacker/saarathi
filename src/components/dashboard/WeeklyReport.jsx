@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { motion } from "framer-motion";
 import { supabase } from "../../lib/supabase";
+import { GeneralWidgetSkeleton } from "./Skeletons";
 
 /* ---- STYLES ---- */
 const Card = styled(motion.div)`
@@ -123,130 +124,131 @@ const InsightItem = styled.div`
 const DAYS_SHORT = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 
 const getWeekStart = () => {
-    const d = new Date();
-    d.setDate(d.getDate() - 6);
-    return d.toISOString().split("T")[0];
+  const d = new Date();
+  d.setDate(d.getDate() - 6);
+  return d.toISOString().split("T")[0];
 };
 
 export default function WeeklyReport({ user }) {
-    const [weekData, setWeekData] = useState([]);
-    const [totalTasks, setTotalTasks] = useState(0);
-    const [totalGoalsDone, setTotalGoalsDone] = useState(0);
-    const [journalCount, setJournalCount] = useState(0);
-    const [loading, setLoading] = useState(true);
+  const [weekData, setWeekData] = useState([]);
+  const [totalTasks, setTotalTasks] = useState(0);
+  const [totalGoalsDone, setTotalGoalsDone] = useState(0);
+  const [journalCount, setJournalCount] = useState(0);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        if (user) fetchWeeklyData();
-        else setLoading(false);
-    }, [user]);
+  useEffect(() => {
+    if (user) fetchWeeklyData();
+    else setLoading(false);
+  }, [user]);
 
-    const fetchWeeklyData = async () => {
-        setLoading(true);
-        try {
-            const weekStart = getWeekStart();
-            const today = new Date().toISOString().split("T")[0];
+  const fetchWeeklyData = async () => {
+    setLoading(true);
+    try {
+      const weekStart = getWeekStart();
+      const today = new Date().toISOString().split("T")[0];
 
-            const days = Array.from({ length: 7 }, (_, i) => {
-                const d = new Date();
-                d.setDate(d.getDate() - (6 - i));
-                return d.toISOString().split("T")[0];
-            });
+      const days = Array.from({ length: 7 }, (_, i) => {
+        const d = new Date();
+        d.setDate(d.getDate() - (6 - i));
+        return d.toISOString().split("T")[0];
+      });
 
-            const [
-                { data: completions },
-                { data: journalData }
-            ] = await Promise.all([
-                supabase.from("task_completions").select("completed_date")
-                    .eq("user_id", user.id).gte("completed_date", weekStart),
-                supabase.from("journal_entries").select("id")
-                    .eq("user_id", user.id).gte("created_at", weekStart + "T00:00:00")
-            ]);
+      const [
+        { data: completions },
+        { data: journalData }
+      ] = await Promise.all([
+        supabase.from("task_completions").select("completed_date")
+          .eq("user_id", user.id).gte("completed_date", weekStart),
+        supabase.from("journal_entries").select("id")
+          .eq("user_id", user.id).gte("created_at", weekStart + "T00:00:00")
+      ]);
 
-            const byDay = {};
-            days.forEach(d => { byDay[d] = 0; });
-            (completions || []).forEach(c => {
-                if (byDay[c.completed_date] !== undefined) byDay[c.completed_date]++;
-            });
+      const byDay = {};
+      days.forEach(d => { byDay[d] = 0; });
+      (completions || []).forEach(c => {
+        if (byDay[c.completed_date] !== undefined) byDay[c.completed_date]++;
+      });
 
-            setWeekData(days.map(d => ({ date: d, count: byDay[d] })));
-            setTotalTasks((completions || []).length);
-            setJournalCount((journalData || []).length);
-        } catch (e) {
-            console.error("Weekly report error:", e);
-        } finally { setLoading(false); }
-    };
+      setWeekData(days.map(d => ({ date: d, count: byDay[d] })));
+      setTotalTasks((completions || []).length);
+      setJournalCount((journalData || []).length);
+    } catch (e) {
+      console.error("Weekly report error:", e);
+    } finally { setLoading(false); }
+  };
 
-    if (!user || loading) return null;
+  if (!user) return null;
+  if (loading) return <GeneralWidgetSkeleton />;
 
-    const maxCount = Math.max(...weekData.map(d => d.count), 1);
-    const todayStr = new Date().toISOString().split("T")[0];
-    const avgDaily = totalTasks > 0 ? (totalTasks / 7).toFixed(1) : "0";
+  const maxCount = Math.max(...weekData.map(d => d.count), 1);
+  const todayStr = new Date().toISOString().split("T")[0];
+  const avgDaily = totalTasks > 0 ? (totalTasks / 7).toFixed(1) : "0";
 
-    const bestDay = weekData.reduce((best, d) => d.count > best.count ? d : best, weekData[0] || { count: 0, date: todayStr });
+  const bestDay = weekData.reduce((best, d) => d.count > best.count ? d : best, weekData[0] || { count: 0, date: todayStr });
 
-    const insights = [];
-    if (totalTasks === 0) insights.push({ emoji: "💡", text: "Start checking off daily tasks to see your weekly progress here." });
-    else {
-        if (totalTasks >= 20) insights.push({ emoji: "🏆", text: "Incredible week! You completed " + totalTasks + " tasks." });
-        else if (totalTasks >= 10) insights.push({ emoji: "⚡", text: "Great week with " + totalTasks + " tasks completed." });
-        else insights.push({ emoji: "📈", text: totalTasks + " tasks this week. Try to hit 10 next week!" });
+  const insights = [];
+  if (totalTasks === 0) insights.push({ emoji: "💡", text: "Start checking off daily tasks to see your weekly progress here." });
+  else {
+    if (totalTasks >= 20) insights.push({ emoji: "🏆", text: "Incredible week! You completed " + totalTasks + " tasks." });
+    else if (totalTasks >= 10) insights.push({ emoji: "⚡", text: "Great week with " + totalTasks + " tasks completed." });
+    else insights.push({ emoji: "📈", text: totalTasks + " tasks this week. Try to hit 10 next week!" });
 
-        if (journalCount > 0) insights.push({ emoji: "📓", text: "You journaled " + journalCount + " time" + (journalCount > 1 ? "s" : "") + " this week. Keep reflecting!" });
-        else insights.push({ emoji: "📝", text: "No journal entries this week. Even one sentence a day helps." });
+    if (journalCount > 0) insights.push({ emoji: "📓", text: "You journaled " + journalCount + " time" + (journalCount > 1 ? "s" : "") + " this week. Keep reflecting!" });
+    else insights.push({ emoji: "📝", text: "No journal entries this week. Even one sentence a day helps." });
 
-        if (bestDay.count > 0) {
-            const bestDayName = new Date(bestDay.date + "T12:00:00").toLocaleDateString("en-IN", { weekday: "long" });
-            insights.push({ emoji: "🌟", text: `${bestDayName} was your best day with ${bestDay.count} tasks completed!` });
-        }
+    if (bestDay.count > 0) {
+      const bestDayName = new Date(bestDay.date + "T12:00:00").toLocaleDateString("en-IN", { weekday: "long" });
+      insights.push({ emoji: "🌟", text: `${bestDayName} was your best day with ${bestDay.count} tasks completed!` });
     }
+  }
 
-    return (
-        <Card initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
-            <Header>
-                <Title>📋 Weekly Summary</Title>
-                <WeekBadge>Last 7 days</WeekBadge>
-            </Header>
+  return (
+    <Card initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
+      <Header>
+        <Title>📋 Weekly Summary</Title>
+        <WeekBadge>Last 7 days</WeekBadge>
+      </Header>
 
-            <StatsRow>
-                <StatBox bg="#f0fdf4">
-                    <StatNum color="#16a34a">{totalTasks}</StatNum>
-                    <StatLabel>Tasks Done</StatLabel>
-                </StatBox>
-                <StatBox bg="#faf5ff">
-                    <StatNum color="#9333ea">{avgDaily}</StatNum>
-                    <StatLabel>Avg / Day</StatLabel>
-                </StatBox>
-                <StatBox bg="#eff6ff">
-                    <StatNum color="#2563eb">{journalCount}</StatNum>
-                    <StatLabel>Journal Entries</StatLabel>
-                </StatBox>
-            </StatsRow>
+      <StatsRow>
+        <StatBox bg="#f0fdf4">
+          <StatNum color="#16a34a">{totalTasks}</StatNum>
+          <StatLabel>Tasks Done</StatLabel>
+        </StatBox>
+        <StatBox bg="#faf5ff">
+          <StatNum color="#9333ea">{avgDaily}</StatNum>
+          <StatLabel>Avg / Day</StatLabel>
+        </StatBox>
+        <StatBox bg="#eff6ff">
+          <StatNum color="#2563eb">{journalCount}</StatNum>
+          <StatLabel>Journal Entries</StatLabel>
+        </StatBox>
+      </StatsRow>
 
-            <ChartSection>
-                <ChartTitle>Daily Task Completions</ChartTitle>
-                <BarsRow>
-                    {weekData.map((d, i) => {
-                        const dayIdx = new Date(d.date + "T12:00:00").getDay();
-                        const isToday = d.date === todayStr;
-                        const pct = maxCount > 0 ? Math.round((d.count / maxCount) * 100) : 0;
-                        return (
-                            <BarWrap key={d.date}>
-                                <Bar pct={pct} color={isToday ? "#6366f1" : "#c7d2fe"} title={`${d.count} tasks`} />
-                                <BarDayLabel today={isToday}>{DAYS_SHORT[dayIdx]}</BarDayLabel>
-                            </BarWrap>
-                        );
-                    })}
-                </BarsRow>
-            </ChartSection>
+      <ChartSection>
+        <ChartTitle>Daily Task Completions</ChartTitle>
+        <BarsRow>
+          {weekData.map((d, i) => {
+            const dayIdx = new Date(d.date + "T12:00:00").getDay();
+            const isToday = d.date === todayStr;
+            const pct = maxCount > 0 ? Math.round((d.count / maxCount) * 100) : 0;
+            return (
+              <BarWrap key={d.date}>
+                <Bar pct={pct} color={isToday ? "#6366f1" : "#c7d2fe"} title={`${d.count} tasks`} />
+                <BarDayLabel today={isToday}>{DAYS_SHORT[dayIdx]}</BarDayLabel>
+              </BarWrap>
+            );
+          })}
+        </BarsRow>
+      </ChartSection>
 
-            <InsightSection>
-                {insights.map((ins, i) => (
-                    <InsightItem key={i}>
-                        <span>{ins.emoji}</span>
-                        <span>{ins.text}</span>
-                    </InsightItem>
-                ))}
-            </InsightSection>
-        </Card>
-    );
+      <InsightSection>
+        {insights.map((ins, i) => (
+          <InsightItem key={i}>
+            <span>{ins.emoji}</span>
+            <span>{ins.text}</span>
+          </InsightItem>
+        ))}
+      </InsightSection>
+    </Card>
+  );
 }

@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../lib/supabase";
+import { GeneralWidgetSkeleton } from "./Skeletons";
 
 /* ---- STYLES ---- */
 const Card = styled(motion.div)`
@@ -118,6 +119,45 @@ const TaskRow = styled.div`
   transition: background 0.15s;
 
   &:hover { background: #f1f5f9; }
+
+  .delete-btn {
+    opacity: 0;
+    color: #ef4444;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0.3rem;
+    display: flex;
+    align-items: center;
+    border-radius: 4px;
+    transition: all 0.2s;
+  }
+
+  &:hover .delete-btn {
+    opacity: 0.7;
+  }
+
+  .delete-btn:hover {
+    opacity: 1 !important;
+    background: #fee2e2;
+  }
+`;
+
+const EmptyStateGraphic = styled(motion.div)`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  color: #94a3b8;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 1px dashed #cbd5e1;
+  text-align: center;
+  
+  svg { margin-bottom: 1rem; opacity: 0.8; }
+  h4 { color: #334155; margin-bottom: 0.3rem; font-size: 0.95rem; font-weight: 600; }
+  p { font-size: 0.8rem; max-width: 220px; line-height: 1.4; margin: 0;}
 `;
 
 const CheckCircle = styled.div`
@@ -382,6 +422,19 @@ export default function DailyRoutine({ user }) {
         }
     };
 
+    const deleteTask = async (e, id) => {
+        e.stopPropagation();
+        setSaving(true);
+        try {
+            await supabase.from("daily_tasks").delete().eq("id", id);
+            setTasks(prev => prev.filter(t => t.id !== id));
+        } catch (error) {
+            console.error("Error deleting task:", error);
+        } finally {
+            setSaving(false);
+        }
+    };
+
     const toggleDay = (d) => {
         setForm(f => ({
             ...f,
@@ -451,7 +504,7 @@ export default function DailyRoutine({ user }) {
                 <TodaySection>
                     <TodayTitle>Today — {DAY_NAMES[today]}</TodayTitle>
                     {loading ? (
-                        <EmptyText>Loading...</EmptyText>
+                        <GeneralWidgetSkeleton />
                     ) : todayTasks.length > 0 ? (
                         <TaskList>
                             {todayTasks.map(task => (
@@ -465,11 +518,31 @@ export default function DailyRoutine({ user }) {
                                     </CheckCircle>
                                     <TaskName done={completions.has(task.id)}>{task.title}</TaskName>
                                     <CategoryTag color={task.color}>{task.category}</CategoryTag>
+                                    <button
+                                        className="delete-btn"
+                                        onClick={(e) => deleteTask(e, task.id)}
+                                        title="Delete recurring task"
+                                    >
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                        </svg>
+                                    </button>
                                 </TaskRow>
                             ))}
                         </TaskList>
                     ) : (
-                        <EmptyText>No tasks scheduled for today.</EmptyText>
+                        <EmptyStateGraphic
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ duration: 0.3 }}
+                        >
+                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="1.5">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            <h4>A clean slate</h4>
+                            <p>You have no recurring tasks scheduled for today.</p>
+                        </EmptyStateGraphic>
                     )}
 
                     {user && (

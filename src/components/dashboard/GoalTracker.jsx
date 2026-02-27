@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../lib/supabase";
+import { GeneralWidgetSkeleton } from "./Skeletons";
 
 /* ---- STYLES ---- */
 const Card = styled(motion.div)`
@@ -144,20 +145,21 @@ const MCCheck = styled.div`
   display: flex; align-items: center; justify-content: center;
 `;
 
-const EmptyState = styled.div`
-  text-align: center;
-  padding: 2rem 1rem;
+const EmptyStateGraphic = styled(motion.div)`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  color: #94a3b8;
   background: #f8fafc;
   border-radius: 12px;
-  border: 1px dashed #cbd5e0;
-`;
-
-const EmptyTitle = styled.h4`
-  color: #374151; font-size: 1rem; margin-bottom: 0.4rem;
-`;
-
-const EmptyText = styled.p`
-  color: #9ca3af; font-size: 0.85rem; line-height: 1.5;
+  border: 1px dashed #cbd5e1;
+  text-align: center;
+  
+  svg { margin-bottom: 1rem; opacity: 0.8; }
+  h4 { color: #334155; margin-bottom: 0.3rem; font-size: 0.95rem; font-weight: 600; }
+  p { font-size: 0.8rem; max-width: 240px; line-height: 1.4; margin: 0;}
 `;
 
 const Modal = styled(motion.div)`
@@ -349,12 +351,19 @@ export default function GoalTracker({ user }) {
         </Header>
 
         {loading ? (
-          <EmptyState><EmptyText>Loading your goals...</EmptyText></EmptyState>
+          <GeneralWidgetSkeleton />
         ) : goals.length === 0 ? (
-          <EmptyState>
-            <EmptyTitle>No goals yet</EmptyTitle>
-            <EmptyText>Add your first long-term goal and break it into milestones you can actually achieve.</EmptyText>
-          </EmptyState>
+          <EmptyStateGraphic
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3 }}
+          >
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="1.5">
+              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+            </svg>
+            <h4>No goals yet</h4>
+            <p>Add your first long-term goal and break it into milestones you can achieve.</p>
+          </EmptyStateGraphic>
         ) : (
           goals.map(goal => {
             const pct = getMilestonePct(goal);

@@ -23,6 +23,7 @@ import ExamCalendar from "./pages/ExamCalendar";
 import NotFound from "./pages/NotFound";
 import About from "./pages/About";
 import ScrollToTop from "./components/ScrollToTop";
+import AIGuide from "./components/chat/AIGuide";
 
 export default function App() {
   const location = useLocation();
@@ -71,6 +72,9 @@ export default function App() {
         <Route path="/about" element={<About />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
+
+      {/* GLOBAL AI MENTOR WIDGET */}
+      <AIGuide />
     </>
   );
 }

@@ -12,8 +12,8 @@ import DailyRoutine from "../components/dashboard/DailyRoutine";
 import DashboardOnboarding from "../components/dashboard/DashboardOnboarding";
 import StreakBanner from "../components/dashboard/StreakBanner";
 import WeeklyReport from "../components/dashboard/WeeklyReport";
-import DailyCheckin from "../components/dashboard/DailyCheckin";
 import ExamCountdown from "../components/dashboard/ExamCountdown";
+import DailyGreetingModal from "../components/dashboard/DailyGreetingModal";
 
 const Layout = styled.div`
   min-height: 100vh;
@@ -106,6 +106,19 @@ const ScoreSub = styled.div`
   opacity: 0.7;
 `;
 
+const StreakBadge = styled(motion.div)`
+  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  padding: 0.6rem 1.2rem;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: white;
+  font-weight: 600;
+  font-size: 0.95rem;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+`;
+
 const Grid = styled.div`
   display: grid;
   grid-template-columns: repeat(12, 1fr);
@@ -132,7 +145,9 @@ export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showGreetingModal, setShowGreetingModal] = useState(false);
   const [lifeScore, setLifeScore] = useState(0);
+  const [streak, setStreak] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -168,6 +183,27 @@ export default function Dashboard() {
         .gte("completed_date", weekStart.toISOString().split("T")[0]);
 
       setLifeScore(Math.min((count || 0) * 5, 100));
+
+      // Fetch Gamification Profile Data
+      const { data: profileData } = await supabase
+        .from("profiles")
+        .select("current_streak")
+        .eq("id", usr.id)
+        .maybeSingle();
+
+      if (profileData?.current_streak) setStreak(profileData.current_streak);
+
+      // Check Daily Checkin
+      const today = new Date().toISOString().split("T")[0];
+      const { data: checkin } = await supabase
+        .from("daily_checkins")
+        .select("id")
+        .eq("user_id", usr.id)
+        .eq("checked_in_date", today)
+        .maybeSingle();
+
+      if (!checkin) setShowGreetingModal(true);
+
     }
     setLoading(false);
   };
@@ -212,14 +248,33 @@ export default function Dashboard() {
                 </ScoreInfo>
               </ScoreBanner>
             )}
-            {user && <ExamCountdown user={user} />}
+
+            <div style={{ display: "flex", gap: "1rem" }}>
+              {streak > 0 && (
+                <StreakBadge
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  whileHover={{ y: -2 }}
+                >
+                  🔥 {streak} Day Streak
+                </StreakBadge>
+              )}
+              {user && <ExamCountdown user={user} />}
+            </div>
           </WelcomeRow>
 
-          {/* Streak banner */}
-          {user && <StreakBanner user={user} />}
-
-          {/* Daily check-in */}
-          {user && <DailyCheckin user={user} />}
+          {/* Daily Greeting Override */}
+          <AnimatePresence>
+            {showGreetingModal && (
+              <DailyGreetingModal
+                user={user}
+                onComplete={() => {
+                  setShowGreetingModal(false);
+                  checkUser(); // Refresh dashboard to show updated streak & routines
+                }}
+              />
+            )}
+          </AnimatePresence>
 
           <Grid>
             {/* Goals — full width */}
