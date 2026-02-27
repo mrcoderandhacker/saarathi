@@ -6,25 +6,25 @@ import styled from "styled-components";
 
 const Card = styled(motion.div)`
   background: #ffffff;
-  border-radius: 1.5rem;
-  padding: 2.5rem;
+  border-radius: 1.2rem;
+  padding: 1.8rem;
   border: 1px solid #e5e7eb;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.06);
-  max-width: 520px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
+  max-width: 480px;
   width: 100%;
 `;
 
 const Question = styled.h2`
   font-family: "Playfair Display", serif;
-  font-size: 1.6rem;
+  font-size: 1.35rem;
   color: #111827;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.4rem;
 `;
 
 const Subtitle = styled.p`
-  font-size: 0.95rem;
+  font-size: 0.88rem;
   color: #6b7280;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.2rem;
 `;
 
 const Options = styled.div`
@@ -38,15 +38,15 @@ const Option = styled.button`
   background: ${({ selected }) => (selected ? "#111827" : "#f9fafb")};
   color: ${({ selected }) => (selected ? "#ffffff" : "#111827")};
   border: 1px solid #e5e7eb;
-  padding: 0.9rem 1.2rem;
-  border-radius: 0.9rem;
+  padding: 0.7rem 1rem;
+  border-radius: 0.75rem;
   text-align: left;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   cursor: pointer;
 
   &:hover {
     background: ${({ selected }) =>
-      selected ? "#1f2937" : "#f3f4f6"};
+    selected ? "#1f2937" : "#f3f4f6"};
   }
 `;
 
@@ -86,10 +86,11 @@ const ContinueButton = styled.button`
   color: ${({ disabled }) =>
     disabled ? "#9ca3af" : "#ffffff"};
   border: none;
-  padding: 0.9rem;
-  border-radius: 0.9rem;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
   cursor: ${({ disabled }) =>
     disabled ? "not-allowed" : "pointer"};
+  font-size: 0.9rem;
 `;
 
 const ErrorMessage = styled.p`

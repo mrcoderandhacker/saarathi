@@ -135,6 +135,27 @@ const Tr = styled.tr`
   }
 `;
 
+const SaveButton = styled.button`
+  background: ${props => props.saved ? '#dcfce7' : 'transparent'};
+  color: ${props => props.saved ? '#16a34a' : '#4f46e5'};
+  border: 1px solid ${props => props.saved ? '#16a34a' : '#4f46e5'};
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  
+  &:hover {
+    background: ${props => props.saved ? '#dcfce7' : '#e0e7ff'};
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+`;
+
 const RankBadge = styled.span`
   background: #f1f5f9;
   color: #0f172a;
@@ -163,6 +184,9 @@ export default function EngineeringColleges() {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [user, setUser] = useState(null);
+    const [savingId, setSavingId] = useState(null);
+    const [savedIds, setSavedIds] = useState(new Set());
 
     // Filters
     const [searchQuery, setSearchQuery] = useState("");
@@ -172,8 +196,27 @@ export default function EngineeringColleges() {
     const [sortConfig, setSortConfig] = useState({ key: "saarathii_rank", direction: "asc" });
 
     useEffect(() => {
+        checkUser();
         fetchColleges();
     }, []);
+
+    const checkUser = async () => {
+        const { data: { user } } = await supabase.auth.getUser();
+        setUser(user);
+
+        // If logged in, fetch their already saved colleges
+        if (user) {
+            const { data } = await supabase
+                .from('saved_colleges')
+                .select('college_name')
+                .eq('user_id', user.id);
+
+            if (data) {
+                const savedNames = new Set(data.map(c => c.college_name));
+                setSavedIds(savedNames);
+            }
+        }
+    };
 
     const fetchColleges = async () => {
         try {
@@ -258,6 +301,48 @@ export default function EngineeringColleges() {
             return sortConfig.direction === 'asc' ? ' ↑' : ' ↓';
         }
         return '';
+    };
+
+    const handleSaveCollege = async (college) => {
+        if (!user) {
+            alert("Please log in to save colleges to your dashboard!");
+            return;
+        }
+
+        try {
+            setSavingId(college.institute_id);
+
+            // Ensure profile row exists (FK: saved_colleges.user_id → profiles.id)
+            await supabase
+                .from('profiles')
+                .upsert({ id: user.id }, { onConflict: 'id' });
+
+            const { error } = await supabase
+                .from('saved_colleges')
+                .insert({
+                    user_id: user.id,
+                    college_name: college.institute_name,
+                    city: college.city,
+                    focus_area: `Engineering (Score: ${college.saarathii_score?.toFixed(1) || 'N/A'})`,
+                    icon_color: '#fee2e2',
+                    text_color: '#dc2626',
+                    initials: college.institute_name.substring(0, 2).toUpperCase()
+                });
+
+            if (error) throw error;
+
+            setSavedIds(prev => {
+                const newSet = new Set(prev);
+                newSet.add(college.institute_name);
+                return newSet;
+            });
+
+        } catch (e) {
+            console.error("Failed to save college", e);
+            alert("Failed to save college. Please try again.");
+        } finally {
+            setSavingId(null);
+        }
     };
 
     // Construct structured data (JSON-LD) for SEO
@@ -367,6 +452,7 @@ export default function EngineeringColleges() {
                                     <Th onClick={() => requestSort('avg_rpc')}>
                                         Avg RPC{getSortIndicator('avg_rpc')}
                                     </Th>
+                                    <Th>Action</Th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -382,6 +468,20 @@ export default function EngineeringColleges() {
                                             <Td>{college.saarathii_score?.toFixed(2) || 'N/A'}</Td>
                                             <Td>{college.avg_tlr?.toFixed(2) || 'N/A'}</Td>
                                             <Td>{college.avg_rpc?.toFixed(2) || 'N/A'}</Td>
+                                            <Td>
+                                                <SaveButton
+                                                    onClick={() => handleSaveCollege(college)}
+                                                    disabled={savingId === college.institute_id || savedIds.has(college.institute_name)}
+                                                    saved={savedIds.has(college.institute_name)}
+                                                >
+                                                    {savingId === college.institute_id
+                                                        ? "Saving..."
+                                                        : savedIds.has(college.institute_name)
+                                                            ? "Saved"
+                                                            : "Save"
+                                                    }
+                                                </SaveButton>
+                                            </Td>
                                         </Tr>
                                     ))
                                 ) : (

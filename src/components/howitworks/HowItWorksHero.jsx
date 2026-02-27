@@ -1,188 +1,217 @@
 import { motion } from "framer-motion";
 import styled from "styled-components";
-
-/* ------------------ SECTION ------------------ */
+import { useNavigate } from "react-router-dom";
 
 const Section = styled.section`
-  padding: 120px 24px;
+  padding: 5.5rem 1.5rem 4rem;
   background: #ffffff;
-  position: relative;
-  overflow: hidden;
 `;
 
 const Container = styled.div`
-  max-width: 1200px;
+  max-width: 1100px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 1fr 1.2fr;
+  grid-template-columns: 1fr;
   align-items: center;
-  gap: 60px;
+  gap: 3rem;
 
-  @media (max-width: 900px) {
-    grid-template-columns: 1fr;
+  @media (min-width: 900px) {
+    grid-template-columns: 1fr 1.1fr;
   }
 `;
 
-/* ------------------ LEFT ------------------ */
-
 const Left = styled.div``;
 
-const Title = styled.h1`
-  font-size: 52px;
-  font-weight: 600;
-  line-height: 1.1;
-  color: #111827;
-  margin-bottom: 20px;
+const Label = styled.div`
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #9ca3af;
+  margin-bottom: 0.8rem;
 `;
 
-const Subtitle = styled.p`
-  font-size: 16px;
+const Title = styled(motion.h1)`
+  font-family: "Playfair Display", serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #111827;
+  margin-bottom: 1rem;
+
+  @media (min-width: 768px) { font-size: 2.8rem; }
+  @media (max-width: 640px) { font-size: 1.9rem; }
+`;
+
+const Subtitle = styled(motion.p)`
+  font-size: 0.9rem;
   color: #6b7280;
   max-width: 420px;
+  line-height: 1.7;
+  margin-bottom: 2rem;
 `;
 
-const DataRow = styled.div`
-  margin-top: 40px;
+const CTARow = styled.div`
   display: flex;
-  gap: 30px;
+  gap: 0.8rem;
+  flex-wrap: wrap;
 `;
 
-const DataBlock = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const DataNumber = styled.span`
-  font-size: 22px;
+const PrimaryBtn = styled.button`
+  background: #111827;
+  color: white;
+  border: none;
+  padding: 0.7rem 1.6rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
   font-weight: 600;
-  color: #111827;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover { background: #1f2937; transform: translateY(-1px); }
 `;
 
-const DataLabel = styled.span`
-  font-size: 13px;
-  color: #9ca3af;
+const SecondaryBtn = styled.button`
+  background: transparent;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  padding: 0.7rem 1.6rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover { background: #f9fafb; }
 `;
 
-/* ------------------ RIGHT VISUAL ------------------ */
-
+/* Right visual — stacked cards */
 const VisualWrapper = styled(motion.div)`
   position: relative;
-  height: 520px;
+  height: 380px;
+
+  @media (max-width: 899px) { height: 260px; }
 `;
 
-/* Main Roadmap Card */
-const RoadmapCard = styled.div`
+const VisualCard = styled.div`
   position: absolute;
-  width: 380px;
-  height: 240px;
-  background: #ffffff;
-  border-radius: 24px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
-  padding: 20px;
-`;
-
-/* Mentor Card */
-const MentorCard = styled.div`
-  position: absolute;
-  top: 180px;
-  left: 220px;
-  width: 260px;
-  height: 160px;
-  background: #f9fafb;
-  border-radius: 20px;
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.05);
-  padding: 16px;
-`;
-
-/* AI Card */
-const AICard = styled.div`
-  position: absolute;
-  top: 60px;
-  left: 300px;
-  width: 200px;
-  height: 120px;
-  background: #111827;
+  background: ${p => p.bg || 'white'};
   border-radius: 18px;
-  color: white;
-  padding: 14px;
+  border: 1px solid ${p => p.border || '#e2e8f0'};
+  padding: 1rem 1.3rem;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.07);
+
+  ${p => p.main && `
+    left: 0; top: 0;
+    width: 55%;
+    min-height: 140px;
+  `}
+
+  ${p => p.secondary && `
+    right: 0; top: 60px;
+    width: 50%;
+    min-height: 110px;
+  `}
+
+  ${p => p.accent && `
+    left: 20px; bottom: 20px;
+    width: 44%;
+    min-height: 90px;
+  `}
+
+  @media (max-width: 899px) {
+    ${p => p.main && `width: 50%; min-height: 110px;`}
+    ${p => p.secondary && `width: 48%; min-height: 90px;`}
+    ${p => p.accent && `display: none;`}
+  }
 `;
 
-/* Placeholder Image */
-const ImagePlaceholder = styled.div`
-  width: 100%;
-  height: 100%;
-  background: #e5e7eb;
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  color: #9ca3af;
+const CardLabel = styled.div`
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: ${p => p.color || '#9ca3af'};
+  margin-bottom: 0.4rem;
 `;
 
-/* ------------------ COMPONENT ------------------ */
+const CardContent = styled.div`
+  font-size: 0.8rem;
+  color: #374151;
+  line-height: 1.5;
+`;
+
+const DarkCard = styled.div`
+  background: #111827;
+  border-radius: 10px;
+  padding: 0.5rem 0.8rem;
+  margin-top: 0.5rem;
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.7);
+  font-family: 'Courier New', monospace;
+`;
 
 export default function HowItWorksHero() {
+  const navigate = useNavigate();
+
   return (
     <Section>
       <Container>
-        
-        {/* LEFT */}
         <Left>
-          <Title>
-            Built as a <br /> Growth System
+          <Label>How it works</Label>
+          <Title
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            Built as a growth system.
           </Title>
-
-          <Subtitle>
-            AI planning. Human mentorship. Structured execution.
+          <Subtitle
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+          >
+            AI planning. Human mentorship. Structured execution. Every part of Saarathii is built to keep you moving forward — even on the difficult days.
           </Subtitle>
 
-          <DataRow>
-            <DataBlock>
-              <DataNumber>30/60/90</DataNumber>
-              <DataLabel>Day Plans</DataLabel>
-            </DataBlock>
-
-            <DataBlock>
-              <DataNumber>1:1</DataNumber>
-              <DataLabel>Mentor Assigned</DataLabel>
-            </DataBlock>
-
-            <DataBlock>
-              <DataNumber>24/7</DataNumber>
-              <DataLabel>AI Support</DataLabel>
-            </DataBlock>
-          </DataRow>
+          <CTARow>
+            <PrimaryBtn onClick={() => navigate("/signup")}>
+              Get Started — it's free
+            </PrimaryBtn>
+            <SecondaryBtn onClick={() => navigate("/mentorship#gold-section")}>
+              Get a Mentor
+            </SecondaryBtn>
+          </CTARow>
         </Left>
 
-        {/* RIGHT */}
+        {/* Right — stacked preview cards */}
         <VisualWrapper
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
         >
-          <RoadmapCard>
-            <ImagePlaceholder>
-              Roadmap Preview Image
-            </ImagePlaceholder>
-          </RoadmapCard>
+          <VisualCard main bg="white">
+            <CardLabel color="#6366f1">Your Roadmap</CardLabel>
+            <CardContent>
+              Personalised 30/60/90 day plan — built for your timeline, exams, and goals. Not a template.
+            </CardContent>
+            <DarkCard>Week 3 · JEE Advanced prep · 4 tasks</DarkCard>
+          </VisualCard>
 
-          <MentorCard>
-            <ImagePlaceholder>
-              Mentor Card Image
-            </ImagePlaceholder>
-          </MentorCard>
+          <VisualCard secondary bg="white">
+            <CardLabel color="#10b981">Daily Check-in</CardLabel>
+            <CardContent>
+              Log your mood, track your streak, stay consistent.
+            </CardContent>
+            <DarkCard>Today: Good · Streak: 6 days</DarkCard>
+          </VisualCard>
 
-          <AICard>
-            <div style={{ fontSize: "12px", opacity: 0.8 }}>
-              AI Insight
-            </div>
-            <div style={{ fontSize: "14px", marginTop: "6px" }}>
-              Progress optimized.
-            </div>
-          </AICard>
+          <VisualCard accent bg="#0f172a" border="#0f172a">
+            <CardLabel color="rgba(255,255,255,0.4)">AI Guide</CardLabel>
+            <CardContent style={{ color: "rgba(255,255,255,0.75)", fontSize: "0.75rem" }}>
+              Saarathii AI is available anytime for instant guidance.
+            </CardContent>
+          </VisualCard>
         </VisualWrapper>
-
       </Container>
     </Section>
   );

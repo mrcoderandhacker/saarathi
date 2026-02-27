@@ -1,0 +1,49 @@
+{
+    "name": "Saarathii",
+    "short_name": "Saarathii",
+    "description": "Your personal mentor through academic life. Career discovery, exam planning, scholarships, and real mentors — all in one place.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#0f172a",
+    "theme_color": "#0f172a",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "/public/logo.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/public/logo.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "categories": [
+        "education",
+        "productivity"
+    ],
+    "lang": "en-IN",
+    "shortcuts": [
+        {
+            "name": "Dashboard",
+            "short_name": "Dashboard",
+            "description": "View your dashboard",
+            "url": "/dashboard"
+        },
+        {
+            "name": "Mentorship",
+            "short_name": "Mentorship",
+            "description": "Explore mentorship options",
+            "url": "/mentorship"
+        },
+        {
+            "name": "Journal",
+            "short_name": "Journal",
+            "description": "Write a journal entry",
+            "url": "/journal"
+        }
+    ]
+}

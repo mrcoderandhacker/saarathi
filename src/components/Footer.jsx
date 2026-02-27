@@ -1,11 +1,10 @@
 import styled from "styled-components";
-
-/* ------------------ STYLES ------------------ */
+import { useNavigate } from "react-router-dom";
 
 const FooterSection = styled.footer`
   background: #0f172a;
   color: #e5e7eb;
-  padding: 4.5rem 1.5rem 2.5rem;
+  padding: 4rem 1.5rem 2rem;
 `;
 
 const Container = styled.div`
@@ -16,11 +15,11 @@ const Container = styled.div`
 const TopGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr;
-  gap: 3rem;
-  margin-bottom: 3.5rem;
+  gap: 2.5rem;
+  margin-bottom: 3rem;
 
   @media (min-width: 768px) {
-    grid-template-columns: 2fr 1fr 1fr 1fr;
+    grid-template-columns: 1.8fr 1fr 1fr 1fr;
   }
 `;
 
@@ -28,45 +27,45 @@ const Brand = styled.div``;
 
 const Logo = styled.h3`
   font-family: "Playfair Display", serif;
-  font-size: 1.6rem;
+  font-size: 1.5rem;
   color: #ffffff;
-  margin-bottom: 1rem;
+  margin-bottom: 0.8rem;
 `;
 
 const BrandText = styled.p`
-  font-size: 0.95rem;
-  color: #cbd5f5;
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.45);
   line-height: 1.7;
-  max-width: 320px;
+  max-width: 280px;
 `;
 
 const Column = styled.div``;
 
 const ColumnTitle = styled.h4`
-  font-size: 0.95rem;
-  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
   margin-bottom: 1rem;
-  font-weight: 600;
 `;
 
-const Link = styled.p`
-  font-size: 0.9rem;
-  color: #cbd5f5;
-  margin-bottom: 0.6rem;
+const NavLink = styled.p`
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 0.55rem;
   cursor: pointer;
-  transition: color 0.2s ease;
+  transition: color 0.15s;
 
-  &:hover {
-    color: #ffffff;
-  }
+  &:hover { color: #ffffff; }
 `;
 
 const BottomBar = styled.div`
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(255,255,255,0.07);
   padding-top: 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: 0.5rem;
   align-items: center;
   text-align: center;
 
@@ -78,59 +77,55 @@ const BottomBar = styled.div`
 `;
 
 const BottomText = styled.p`
-  font-size: 0.85rem;
-  color: #9ca3af;
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.3);
 `;
 
-/* ------------------ COMPONENT ------------------ */
-
 export default function Footer() {
+  const navigate = useNavigate();
+
   return (
     <FooterSection>
       <Container>
-        {/* TOP */}
         <TopGrid>
           <Brand>
             <Logo>Saarathii</Logo>
             <BrandText>
-              Saarathii is a student mentorship platform built to guide
-              students through the most important academic decisions of
-              their lives — with clarity, care, and continuous support.
+              A student mentorship platform built to guide students through the most important academic decisions of their lives — with clarity, care, and continuous support.
             </BrandText>
           </Brand>
 
           <Column>
             <ColumnTitle>Platform</ColumnTitle>
-            <Link>How it works</Link>
-            <Link>Mentorship</Link>
-            <Link>For students</Link>
-            <Link>Journal</Link>
+            <NavLink onClick={() => navigate("/")}>Home</NavLink>
+            <NavLink onClick={() => navigate("/mentorship")}>Mentorship</NavLink>
+            <NavLink onClick={() => navigate("/how-it-works")}>How It Works</NavLink>
+            <NavLink onClick={() => navigate("/college-explorer")}>College Explorer</NavLink>
+            <NavLink onClick={() => navigate("/dashboard")}>Dashboard</NavLink>
+            <NavLink onClick={() => navigate("/about")}>About</NavLink>
           </Column>
 
           <Column>
-            <ColumnTitle>Support</ColumnTitle>
-            <Link>Contact us</Link>
-            <Link>Talk to a mentor</Link>
-            <Link>FAQs</Link>
-            <Link>Privacy policy</Link>
+            <ColumnTitle>Explore</ColumnTitle>
+            <NavLink onClick={() => navigate("/discover")}>Discover Yourself</NavLink>
+            <NavLink onClick={() => navigate("/explore")}>Career Paths</NavLink>
+            <NavLink onClick={() => navigate("/scholarships")}>Scholarships</NavLink>
+            <NavLink onClick={() => navigate("/calendar")}>Exam Calendar</NavLink>
+            <NavLink onClick={() => navigate("/journal")}>Journal</NavLink>
           </Column>
 
           <Column>
             <ColumnTitle>Connect</ColumnTitle>
-            <Link>Instagram</Link>
-            <Link>Email</Link>
-            <Link>LinkedIn</Link>
+            <NavLink as="a" href="https://instagram.com" target="_blank" rel="noopener noreferrer">Instagram</NavLink>
+            <NavLink as="a" href="mailto:hello@saarathii.com">Email us</NavLink>
+            <NavLink as="a" href="https://linkedin.com" target="_blank" rel="noopener noreferrer">LinkedIn</NavLink>
+            <NavLink onClick={() => navigate("/mentorship#gold-section")}>Get a Mentor</NavLink>
           </Column>
         </TopGrid>
 
-        {/* BOTTOM */}
         <BottomBar>
-          <BottomText>
-            © {new Date().getFullYear()} Saarathii. All rights reserved.
-          </BottomText>
-          <BottomText>
-            With you. For you. Until you succeed.
-          </BottomText>
+          <BottomText>© {new Date().getFullYear()} Saarathii. All rights reserved.</BottomText>
+          <BottomText>With you. For you. Until you succeed.</BottomText>
         </BottomBar>
       </Container>
     </FooterSection>

@@ -27,13 +27,13 @@ const HeroSection = styled.section`
 const Container = styled.div`
   max-width: 1200px;
   margin: 0 auto;
-  padding: 8rem 1.5rem 6rem;
+  padding: 5.5rem 1.5rem 4rem;
 `;
 
 const Grid = styled.div`
   display: grid;
   grid-template-columns: 1fr;
-  gap: 4rem;
+  gap: 2.5rem;
   align-items: center;
 
   @media (min-width: 900px) {
@@ -44,17 +44,17 @@ const Grid = styled.div`
 const TextBlock = styled(motion.div)`
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
 `;
 
 const Heading = styled.h1`
   font-family: "Playfair Display", serif;
-  font-size: 2.8rem;
+  font-size: 2.2rem;
   line-height: 1.15;
   color: #111827;
 
   @media (min-width: 768px) {
-    font-size: 3.6rem;
+    font-size: 2.9rem;
   }
 `;
 
@@ -81,9 +81,9 @@ const PrimaryButton = styled.button`
   background: #ee5a15;
   color: white;
   border: none;
-  padding: 0.75rem 1.6rem;
+  padding: 0.6rem 1.4rem;
   border-radius: 999px;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.25s ease;
 
@@ -97,9 +97,9 @@ const SecondaryButton = styled.button`
   background: transparent;
   color: #374151;
   border: 1px solid #d1d5db;
-  padding: 0.75rem 1.6rem;
+  padding: 0.6rem 1.4rem;
   border-radius: 999px;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.25s ease;
 
@@ -150,8 +150,8 @@ export default function Hero() {
                 Get Your Saarathii
               </PrimaryButton>
 
-              <SecondaryButton>
-                Explore How It Works
+              <SecondaryButton onClick={() => navigate("/how-it-works")}>
+                How It Works
               </SecondaryButton>
             </ButtonRow>
           </TextBlock>

@@ -2,6 +2,7 @@ import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
 import WhySaarathi from "../components/WhySaarathi";
 import WhoIsSaarathiFor from "../components/WhoIsSaarathiFor";
+import FeatureShowcase from "../components/FeatureShowcase";
 import WhatYouGet from "../components/WhatYouGet";
 import StudentLetter from "../components/StudentLetter";
 import FinalCTA from "../components/FinalCTA";
@@ -14,6 +15,7 @@ export default function Home() {
       <Hero />
       <WhySaarathi />
       <WhoIsSaarathiFor />
+      <FeatureShowcase />
       <WhatYouGet />
       <StudentLetter />
       <FinalCTA />

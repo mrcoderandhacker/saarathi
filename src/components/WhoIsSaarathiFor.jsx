@@ -1,11 +1,9 @@
 import { motion } from "framer-motion";
 import styled from "styled-components";
 
-/* ------------------ STYLES ------------------ */
-
 const Section = styled.section`
-  background: #f9fafb;
-  padding: 6rem 1.5rem;
+  background: #f8fafc;
+  padding: 5rem 1.5rem;
 `;
 
 const Container = styled.div`
@@ -14,29 +12,36 @@ const Container = styled.div`
 `;
 
 const Header = styled.div`
-  max-width: 620px;
-  margin-bottom: 4rem;
+  margin-bottom: 3rem;
 `;
 
-const Title = styled.h2`
+const Label = styled.div`
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #9ca3af;
+  margin-bottom: 0.7rem;
+`;
+
+const Title = styled(motion.h2)`
   font-family: "Playfair Display", serif;
-  font-size: 2.2rem;
+  font-size: 1.9rem;
   color: #111827;
-  margin-bottom: 1rem;
-`;
+  line-height: 1.25;
+  max-width: 540px;
 
-const Subtitle = styled.p`
-  font-size: 1rem;
-  color: #6b7280;
-  line-height: 1.6;
+  @media (min-width: 768px) {
+    font-size: 2.2rem;
+  }
 `;
 
 const Grid = styled.div`
   display: grid;
   grid-template-columns: 1fr;
-  gap: 2rem;
+  gap: 1rem;
 
-  @media (min-width: 768px) {
+  @media (min-width: 640px) {
     grid-template-columns: repeat(2, 1fr);
   }
 
@@ -46,115 +51,127 @@ const Grid = styled.div`
 `;
 
 const Card = styled(motion.div)`
-  background: #ffffff;
-  border-radius: 1.25rem;
-  padding: 2rem;
-  border: 1px solid #e5e7eb;
-  transition: box-shadow 0.25s ease;
+  background: white;
+  border-radius: 18px;
+  padding: 1.6rem;
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 3px;
+    background: ${p => p.accent};
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+
+  &:hover::before {
+    transform: scaleX(1);
+  }
 
   &:hover {
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.07);
+    transform: translateY(-2px);
   }
 `;
 
-const CardTag = styled.span`
+const StageTag = styled.div`
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: ${p => p.color};
+  background: ${p => p.bg};
   display: inline-block;
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: #2563eb;
-  background: #eff6ff;
-  padding: 0.3rem 0.7rem;
-  border-radius: 999px;
-  margin-bottom: 1rem;
+  padding: 0.2rem 0.65rem;
+  border-radius: 4px;
+  margin-bottom: 0.8rem;
+  letter-spacing: 0.04em;
 `;
 
 const CardTitle = styled.h3`
-  font-size: 1.05rem;
-  font-weight: 600;
+  font-size: 0.95rem;
+  font-weight: 700;
   color: #111827;
-  margin-bottom: 0.6rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.3;
 `;
 
 const CardText = styled.p`
-  font-size: 0.95rem;
-  color: #4b5563;
-  line-height: 1.6;
+  font-size: 0.82rem;
+  color: #6b7280;
+  line-height: 1.65;
 `;
 
-/* ------------------ COMPONENT ------------------ */
+const STAGES = [
+  {
+    tag: "Class 10",
+    title: "Finding direction early",
+    text: "Stepping out of foundational schooling and wondering which stream suits you — without pressure or rush.",
+    accent: "#6366f1",
+    tagColor: "#4f46e5",
+    tagBg: "#ede9fe",
+  },
+  {
+    tag: "Class 11",
+    title: "Building strong foundations",
+    text: "You've chosen a stream. Now build the clarity, structure, and strategy to avoid confusion later.",
+    accent: "#3b82f6",
+    tagColor: "#1d4ed8",
+    tagBg: "#dbeafe",
+  },
+  {
+    tag: "Class 12",
+    title: "Decisions that matter",
+    text: "Facing competitive exams, counselling rounds, college choices — where one calm decision changes everything.",
+    accent: "#f59e0b",
+    tagColor: "#d97706",
+    tagBg: "#fef3c7",
+  },
+  {
+    tag: "Drop Year",
+    title: "Regaining focus",
+    text: "Taking a pause to come back stronger — with the right mentorship, emotional support, and a clear plan forward.",
+    accent: "#10b981",
+    tagColor: "#059669",
+    tagBg: "#d1fae5",
+  },
+];
 
 export default function WhoIsSaarathiFor() {
   return (
     <Section>
       <Container>
         <Header>
-          <Title>Who is Saarathii for?</Title>
-          <Subtitle>
-            Saarathii is designed for students standing at important
-            crossroads — unsure, curious, or overwhelmed — and looking
-            for clarity before taking the next step.
-          </Subtitle>
+          <Label>Who it's for</Label>
+          <Title
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            Designed for students standing at important crossroads.
+          </Title>
         </Header>
 
         <Grid>
-          <Card
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <CardTag>Class 10</CardTag>
-            <CardTitle>Finding direction early</CardTitle>
-            <CardText>
-              For students stepping out of foundational schooling and
-              wondering which stream, path, or future suits them best —
-              without pressure or rush.
-            </CardText>
-          </Card>
-
-          <Card
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-          >
-            <CardTag>Class 11</CardTag>
-            <CardTitle>Building strong foundations</CardTitle>
-            <CardText>
-              For students who have chosen a stream but want clarity,
-              structure, and the right strategy to avoid confusion later.
-            </CardText>
-          </Card>
-
-          <Card
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            <CardTag>Class 12</CardTag>
-            <CardTitle>Decisions that matter</CardTitle>
-            <CardText>
-              For students facing competitive exams, counselling rounds,
-              and college choices — where one calm decision can change
-              everything.
-            </CardText>
-          </Card>
-
-          <Card
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-          >
-            <CardTag>Drop Year</CardTag>
-            <CardTitle>Regaining focus & confidence</CardTitle>
-            <CardText>
-              For students taking a pause to come back stronger — with
-              the right mentorship, emotional support, and a clear plan
-              forward.
-            </CardText>
-          </Card>
+          {STAGES.map((s, i) => (
+            <Card
+              key={s.tag}
+              accent={s.accent}
+              initial={{ opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: i * 0.08 }}
+            >
+              <StageTag color={s.tagColor} bg={s.tagBg}>{s.tag}</StageTag>
+              <CardTitle>{s.title}</CardTitle>
+              <CardText>{s.text}</CardText>
+            </Card>
+          ))}
         </Grid>
       </Container>
     </Section>

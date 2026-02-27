@@ -1,5 +1,5 @@
-import { Routes, Route } from "react-router-dom";
-import { AnimatePresence } from "framer-motion";
+import { Routes, Route, useLocation } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 
 import Home from "./pages/Home";
@@ -14,8 +14,18 @@ import CollegeExplorer from "./pages/CollegeExplorer";
 import EngineeringColleges from "./pages/EngineeringColleges";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
+import Profile from "./pages/Profile";
+import Journal from "./pages/Journal";
+import Discover from "./pages/Discover";
+import ExplorePaths from "./pages/ExplorePaths";
+import Scholarships from "./pages/Scholarships";
+import ExamCalendar from "./pages/ExamCalendar";
+import NotFound from "./pages/NotFound";
+import About from "./pages/About";
+import ScrollToTop from "./components/ScrollToTop";
 
 export default function App() {
+  const location = useLocation();
   // ✅ show splash once per tab/session
   const [showIntro, setShowIntro] = useState(() => {
     return !sessionStorage.getItem("saarathi_intro_done");
@@ -28,6 +38,7 @@ export default function App() {
 
   return (
     <>
+      <ScrollToTop />
       {/* NAVBAR ALWAYS PRESENT */}
       <Navbar animate={!showIntro} />
 
@@ -51,6 +62,14 @@ export default function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/login" element={<Login />} />
         <Route path="/auth" element={<Auth />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/journal" element={<Journal />} />
+        <Route path="/discover" element={<Discover />} />
+        <Route path="/explore" element={<ExplorePaths />} />
+        <Route path="/scholarships" element={<Scholarships />} />
+        <Route path="/calendar" element={<ExamCalendar />} />
+        <Route path="/about" element={<About />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </>
   );

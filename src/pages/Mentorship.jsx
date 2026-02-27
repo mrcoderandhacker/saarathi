@@ -5,171 +5,86 @@ import Footer from "../components/Footer";
 import MentorshipHero from "../components/mentorship/MentorshipHero";
 import MentorshipProblem from "../components/mentorship/MentorshipProblem";
 import MentorshipRole from "../components/mentorship/MentorshipRole";
+import MentorshipTimeline from "../components/mentorship/MentorshipTimeline";
 import SaarathiiChat from "../components/mentorship/SaarathiiChat";
+import MentorshipGoldCTA from "../components/mentorship/MentorshipGoldCTA";
 
 import styled from "styled-components";
 
-const AISection = styled.section`
-  max-width: 1300px;
-  margin: 0 auto;
+const ChatSection = styled.section`
+  background: #f5f3ff;
   padding: 4rem 1.5rem;
-  background: linear-gradient(180deg, #ffffff 0%, #f5f3ff 100%);
-  border-radius: 40px 40px 0 0;
-  scroll-margin-top: 80px; /* Adds offset for smooth scrolling */
 `;
 
-const AITitle = styled.h2`
+const ChatInner = styled.div`
+  max-width: 1300px;
+  margin: 0 auto;
+`;
+
+const ChatLabel = styled.div`
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #9ca3af;
+  margin-bottom: 0.7rem;
+  text-align: center;
+`;
+
+const ChatTitle = styled.h2`
   font-family: "Playfair Display", serif;
-  font-size: 2.4rem;
+  font-size: 1.9rem;
   font-weight: 700;
   color: #0a0a0a;
   text-align: center;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 `;
 
-const AISubtitle = styled.p`
-  font-size: 1.1rem;
+const ChatSub = styled.p`
+  font-size: 0.9rem;
   color: #4b5563;
   text-align: center;
-  max-width: 700px;
-  margin: 0 auto 3rem auto;
-  line-height: 1.6;
-`;
-
-const Highlight = styled.span`
-  color: #8b5cf6;
-  position: relative;
-  
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: 2px;
-    left: 0;
-    width: 100%;
-    height: 6px;
-    background: #ede9fe;
-    z-index: -1;
-    border-radius: 4px;
-  }
-`;
-
-// Add a floating button to access AI chat
-const AIFloatingButton = styled.button`
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  background: #8b5cf6;
-  color: white;
-  border: none;
-  border-radius: 50px;
-  padding: 1rem 2rem;
-  font-size: 1rem;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  cursor: pointer;
-  box-shadow: 0 10px 25px rgba(139, 92, 246, 0.3);
-  z-index: 99;
-  transition: all 0.2s;
-
-  &:hover {
-    background: #7c3aed;
-    transform: translateY(-2px);
-    box-shadow: 0 15px 30px rgba(139, 92, 246, 0.4);
-  }
-
-  svg {
-    width: 20px;
-    height: 20px;
-  }
-
-  @media (max-width: 768px) {
-    bottom: 20px;
-    right: 20px;
-    padding: 0.8rem 1.5rem;
-    font-size: 0.9rem;
-  }
-`;
-
-// Add a section connector
-const SectionConnector = styled.div`
-  text-align: center;
-  margin: 2rem 0;
-  position: relative;
-  
-  &::before,
-  &::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    width: 30%;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, #e0e7ff, transparent);
-  }
-  
-  &::before {
-    left: 0;
-  }
-  
-  &::after {
-    right: 0;
-  }
-`;
-
-const ConnectorText = styled.span`
-  background: white;
-  padding: 0.5rem 1.5rem;
-  color: #8b5cf6;
-  font-size: 0.9rem;
-  font-weight: 500;
-  border: 1px solid #e0e7ff;
-  border-radius: 40px;
-  display: inline-block;
+  max-width: 560px;
+  margin: 0 auto 2rem;
+  line-height: 1.65;
 `;
 
 export default function Mentorship() {
-  // Force scroll to top when page loads
   useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      behavior: "instant" // Use "instant" to prevent any scrolling animation
-    });
+    window.scrollTo({ top: 0, behavior: "instant" });
   }, []);
-
-  const scrollToAI = () => {
-    const aiSection = document.getElementById('ai-chat-section');
-    if (aiSection) {
-      aiSection.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
 
   return (
     <>
       <Navbar />
 
       <main>
+        {/* 1. Hero — problem statement + CTA */}
         <MentorshipHero />
-        
-        {/* Section Connector - Visual separator */}
-        <SectionConnector>
-          <ConnectorText>✨ Need personalized guidance?</ConnectorText>
-        </SectionConnector>
-        
-        {/* AI Chat Section - Added after Hero with ID for scrolling */}
-        <AISection id="ai-chat-section">
-          <AITitle>
-            Talk to <Highlight>Saarathii</Highlight> — Your AI Mentor
-          </AITitle>
-          <AISubtitle>
-            Get instant, personalized guidance for your academic journey. 
-            Ask anything about stream selection, exam prep, or career paths.
-          </AISubtitle>
-          <SaarathiiChat />
-        </AISection>
 
+        {/* 2. The real problem — student thoughts */}
         <MentorshipProblem />
+
+        {/* 3. Saarathii's role — dark numbered pillars */}
         <MentorshipRole />
+
+        {/* 4. How the mentor relationship works — timeline */}
+        <MentorshipTimeline />
+
+        {/* 5. AI chat — try it now */}
+        <ChatSection id="ai-chat-section">
+          <ChatInner>
+            <ChatLabel>Free for everyone</ChatLabel>
+            <ChatTitle>Talk to Saarathii — Your AI Guide</ChatTitle>
+            <ChatSub>
+              Get instant guidance for your academic journey. Ask anything about stream selection, exam prep, or career paths — no login needed.
+            </ChatSub>
+            <SaarathiiChat />
+          </ChatInner>
+        </ChatSection>
+
+        {/* 6. Gold CTA — get a real mentor */}
+        <MentorshipGoldCTA />
       </main>
 
       <Footer />

@@ -18,16 +18,16 @@ const Layout = styled.div`
 
 const Header = styled.div`
   text-align: center;
-  margin-bottom: 2rem;
-  max-width: 520px;
+  margin-bottom: 1.2rem;
+  max-width: 480px;
   width: 100%;
 `;
 
 const Title = styled.h1`
   font-family: "Playfair Display", serif;
-  font-size: 2.5rem;
+  font-size: 1.9rem;
   color: #111827;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.3rem;
 `;
 
 const Subtitle = styled.p`
@@ -128,24 +128,24 @@ export default function Signup() {
 
   const handleFinalSubmit = async () => {
     if (isSubmitting) return; // Prevent multiple submissions
-    
+
     setIsSubmitting(true);
-    
+
     try {
       // Save to localStorage first
       localStorage.setItem(
         "saarathi_onboarding",
         JSON.stringify(answers)
       );
-      
+
       console.log("Collected answers:", answers);
-      
+
       // Navigate without waiting
       navigate("/auth");
-      
+
     } catch (error) {
       console.error("Error saving data:", error);
-      
+
       // Still navigate even if there's an error
       navigate("/auth");
     } finally {
@@ -161,7 +161,7 @@ export default function Signup() {
           <Title>Saarathii</Title>
           <Subtitle>Your personal academic guide</Subtitle>
         </Header>
-        
+
         <SignupQuestion
           question="You're all set ✨"
           options={["Create my Saarathi account"]}
@@ -179,12 +179,12 @@ export default function Signup() {
         <Title>Saarathii</Title>
         <Subtitle>Your personal academic guide</Subtitle>
       </Header>
-      
+
       <ProgressBar
         currentStep={step + 1}
         totalSteps={QUESTIONS.length}
       />
-      
+
       <SignupQuestion
         question={currentQuestion.question}
         options={currentQuestion.options || []}
