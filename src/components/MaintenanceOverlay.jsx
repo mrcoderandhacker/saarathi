@@ -107,65 +107,74 @@ const Logo = styled.div`
 `;
 
 export default function MaintenanceOverlay({ message }) {
-    return (
-        <Overlay
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.4 }}
-        >
-            <Logo>Saarathii ✦</Logo>
+  return (
+    <Overlay
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.4 }}
+    >
+      <Logo>Saarathii ✦</Logo>
 
-            <OrbitWrapper>
-                <CenterCircle>🛠️</CenterCircle>
-                <Dot color="#6366f1" duration="3s" delay="0s" />
-                <Dot color="#a78bfa" duration="4.5s" delay="-1.5s" />
-                <Dot color="#818cf8" duration="6s" delay="-3s" />
-            </OrbitWrapper>
+      <OrbitWrapper>
+        <CenterCircle>🛠️</CenterCircle>
+        <Dot color="#6366f1" duration="3s" delay="0s" />
+        <Dot color="#a78bfa" duration="4.5s" delay="-1.5s" />
+        <Dot color="#818cf8" duration="6s" delay="-3s" />
+      </OrbitWrapper>
 
-            <Title>We're Upgrading Saarathii</Title>
-            <Subtitle>
-                {message || "Our team is working hard to bring you new features. We'll be back very soon!"}
-            </Subtitle>
+      <Title>We're Upgrading Saarathii</Title>
+      <Subtitle>
+        {message || "Our team is working hard to bring you new features. We'll be back very soon!"}
+      </Subtitle>
 
-            <StatusPill>
-                <Blink /> Active Development · Back Soon
-            </StatusPill>
-        </Overlay>
-    );
+      <StatusPill>
+        <Blink /> Active Development · Back Soon
+      </StatusPill>
+    </Overlay>
+  );
 }
 
 export function useMaintenanceMode() {
-    const [isMaintenance, setIsMaintenance] = useState(false);
-    const [message, setMessage] = useState('');
-    const [loading, setLoading] = useState(true);
+  const [isMaintenance, setIsMaintenance] = useState(false);
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const check = async () => {
-            const { data } = await supabase
-                .from('site_config')
-                .select('maintenance_mode, maintenance_message')
-                .eq('id', 1)
-                .single();
+  // ✅ Always bypass on localhost so you can develop freely
+  const isLocalhost = window.location.hostname === 'localhost' ||
+    window.location.hostname === '127.0.0.1';
 
-            setIsMaintenance(data?.maintenance_mode ?? false);
-            setMessage(data?.maintenance_message ?? '');
-            setLoading(false);
-        };
+  useEffect(() => {
+    if (isLocalhost) {
+      setLoading(false);
+      return; // Skip Supabase check entirely when developing locally
+    }
 
-        check();
+    const check = async () => {
+      const { data } = await supabase
+        .from('site_config')
+        .select('maintenance_mode, maintenance_message')
+        .eq('id', 1)
+        .single();
 
-        // Real-time subscription — flips instantly when you toggle in Supabase
-        const channel = supabase
-            .channel('site_config_changes')
-            .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'site_config' }, (payload) => {
-                setIsMaintenance(payload.new.maintenance_mode);
-                setMessage(payload.new.maintenance_message);
-            })
-            .subscribe();
+      setIsMaintenance(data?.maintenance_mode ?? false);
+      setMessage(data?.maintenance_message ?? '');
+      setLoading(false);
+    };
 
-        return () => supabase.removeChannel(channel);
-    }, []);
+    check();
 
-    return { isMaintenance, message, loading };
+    // Real-time subscription — flips instantly when you toggle in Supabase
+    const channel = supabase
+      .channel('site_config_changes')
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'site_config' }, (payload) => {
+        setIsMaintenance(payload.new.maintenance_mode);
+        setMessage(payload.new.maintenance_message);
+      })
+      .subscribe();
+
+    return () => supabase.removeChannel(channel);
+  }, [isLocalhost]);
+
+  return { isMaintenance, message, loading };
 }
