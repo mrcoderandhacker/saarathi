@@ -24,6 +24,7 @@ import NotFound from "./pages/NotFound";
 import About from "./pages/About";
 import ScrollToTop from "./components/ScrollToTop";
 import AIGuide from "./components/chat/AIGuide";
+import MaintenanceOverlay, { useMaintenanceMode } from "./components/MaintenanceOverlay";
 
 export default function App() {
   const location = useLocation();
@@ -32,10 +33,22 @@ export default function App() {
     return !sessionStorage.getItem("saarathi_intro_done");
   });
 
+  // ✅ Supabase-controlled maintenance mode (real-time)
+  const { isMaintenance, message } = useMaintenanceMode();
+
   const handleIntroFinish = () => {
     sessionStorage.setItem("saarathi_intro_done", "true");
     setShowIntro(false);
   };
+
+  // Show maintenance overlay for all visitors when flag is ON
+  if (isMaintenance) {
+    return (
+      <AnimatePresence>
+        <MaintenanceOverlay message={message} />
+      </AnimatePresence>
+    );
+  }
 
   return (
     <>

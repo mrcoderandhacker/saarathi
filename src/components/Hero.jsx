@@ -129,21 +129,13 @@ export default function Hero() {
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
             <Heading>
-              With you. For you.
-              <br />
-              Until you succeed.
+              With you. For you.<br />Until you succeed.
             </Heading>
 
             <Description>
-              Saarathii is your personal mentor through the most confusing
-              phase of your academic journey — from Class 10 to your dream
-              college.
+              Your personal mentor from Class 10 to your dream college.<br />
+              Real guidance. Not just advice.
             </Description>
-
-            <SubDescription>
-              Academic clarity, emotional support, and real guidance —
-              not advice, but mentorship.
-            </SubDescription>
 
             <ButtonRow>
               <PrimaryButton onClick={() => navigate("/signup")}>

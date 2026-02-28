@@ -92,15 +92,15 @@ const CardText = styled.p`
 const PILLARS = [
   {
     title: "Clarity over confusion",
-    text: "We help you understand your strengths, options, and possibilities — so your decisions feel informed, calm, and truly your own.",
+    text: "Understand your strengths and options. Make informed, calm decisions that feel truly your own.",
   },
   {
     title: "Mentors who've walked the path",
-    text: "Our mentors are people who have already faced these decisions. They guide from lived experience — not theory or textbooks.",
+    text: "Guided by mentors who have actually walked the path and succeeded. Lived experience over theory.",
   },
   {
     title: "Support beyond academics",
-    text: "Saarathii supports not just your studies but your mindset and emotional well-being — because clarity begins with calm.",
+    text: "We support your mindset and emotional well-being because true clarity begins with calm.",
   },
 ];
 

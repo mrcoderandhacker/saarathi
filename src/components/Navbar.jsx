@@ -11,7 +11,7 @@ const Header = styled(motion.header)`
   position: fixed;
   top: 0;
   width: 100%;
-  z-index: 100;
+  z-index: 2000;
   backdrop-filter: blur(12px);
   background: rgba(255, 255, 255, 0.7);
   border-bottom: 1px solid rgba(0, 0, 0, 0.04);
@@ -143,13 +143,14 @@ const MenuButton = styled.button`
 /* Drawer backdrop */
 const Backdrop = styled(motion.div)`
   display: none;
+
   @media (max-width: 899px) {
     display: block;
     position: fixed;
     inset: 0;
     background: rgba(15, 23, 42, 0.45);
     backdrop-filter: blur(2px);
-    z-index: 98;
+    z-index: 1999;
   }
 `;
 
@@ -166,7 +167,7 @@ const MobileMenu = styled(motion.div)`
     bottom: 0;
     width: min(320px, 85vw);
     background: white;
-    z-index: 99;
+    z-index: 2001;
     box-shadow: -10px 0 40px rgba(0,0,0,0.12);
     overflow-y: auto;
   }

@@ -74,7 +74,7 @@ const TaskChip = styled.div`
   color: white;
   background: ${p => p.color || '#6366f1'};
   opacity: ${p => p.done ? 0.5 : 1};
-  cursor: ${p => p.isToday ? 'pointer' : 'default'};
+  cursor: ${p => p.$isToday ? 'pointer' : 'default'};
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
@@ -484,7 +484,7 @@ export default function DailyRoutine({ user }) {
                                 <TaskChip
                                     key={t.id}
                                     color={t.color}
-                                    isToday={dayIdx === today}
+                                    $isToday={dayIdx === today}
                                     done={dayIdx === today && completions.has(t.id)}
                                     title={t.title}
                                 >

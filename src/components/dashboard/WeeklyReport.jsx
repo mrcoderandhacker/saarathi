@@ -234,7 +234,7 @@ export default function WeeklyReport({ user }) {
             return (
               <BarWrap key={d.date}>
                 <Bar pct={pct} color={isToday ? "#6366f1" : "#c7d2fe"} title={`${d.count} tasks`} />
-                <BarDayLabel today={isToday}>{DAYS_SHORT[dayIdx]}</BarDayLabel>
+                <BarDayLabel $today={isToday}>{DAYS_SHORT[dayIdx]}</BarDayLabel>
               </BarWrap>
             );
           })}

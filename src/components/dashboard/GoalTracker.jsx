@@ -106,8 +106,8 @@ const ProgressBar = styled.div`
 const ProgressFill = styled.div`
   height: 100%;
   border-radius: 999px;
-  background: ${p => CATEGORY_COLORS[p.category] || '#6366f1'};
-  width: ${p => p.pct}%;
+  background: ${p => CATEGORY_COLORS[p.$category] || '#6366f1'};
+  width: ${p => p.$pct}%;
   transition: width 0.5s ease;
 `;
 
@@ -130,8 +130,8 @@ const MilestoneRow = styled.div`
   align-items: center;
   gap: 0.6rem;
   font-size: 0.85rem;
-  color: ${p => p.done ? '#9ca3af' : '#374151'};
-  text-decoration: ${p => p.done ? 'line-through' : 'none'};
+  color: ${p => p.$done ? '#9ca3af' : '#374151'};
+  text-decoration: ${p => p.$done ? 'line-through' : 'none'};
   cursor: pointer;
   padding: 0.3rem 0;
   &:hover { color: #111827; }
@@ -139,8 +139,8 @@ const MilestoneRow = styled.div`
 
 const MCCheck = styled.div`
   width: 16px; height: 16px; border-radius: 50%;
-  border: 2px solid ${p => p.done ? CATEGORY_COLORS[p.cat] : '#cbd5e1'};
-  background: ${p => p.done ? CATEGORY_COLORS[p.cat] : 'transparent'};
+  border: 2px solid ${p => p.$done ? CATEGORY_COLORS[p.$cat] : '#cbd5e1'};
+  background: ${p => p.$done ? CATEGORY_COLORS[p.$cat] : 'transparent'};
   flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
 `;
@@ -276,6 +276,7 @@ export default function GoalTracker({ user }) {
     title: "", description: "", category: "academic", target_date: "", milestones: []
   });
   const [mInput, setMInput] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
 
   useEffect(() => {
     if (user) fetchGoals();
@@ -323,6 +324,32 @@ export default function GoalTracker({ user }) {
     if (!mInput.trim()) return;
     setForm(f => ({ ...f, milestones: [...f.milestones, mInput.trim()] }));
     setMInput("");
+  };
+
+  const generateAI = async () => {
+    if (!form.title.trim()) {
+      alert("Please enter a Goal Title first!");
+      return;
+    }
+    setIsGenerating(true);
+    try {
+      // In production, configure API base URL properly. Defaulting to local backend port 4000.
+      const res = await fetch("http://127.0.0.1:4000/api/ai/generate-roadmap", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: user.id, goal: form.title, durationMonths: 6 })
+      });
+      if (!res.ok) throw new Error("Failed to generate AI Roadmap");
+      const data = await res.json();
+
+      const newMilestones = data.curriculum.map(m => `Month ${m.month}: ${m.focus} - ${m.topics.join(', ')}`);
+      setForm(f => ({ ...f, milestones: newMilestones }));
+    } catch (e) {
+      console.error(e);
+      alert("Failed to connect to AI Engine. Make sure backend is running.");
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const getMilestonePct = (goal) => {
@@ -385,7 +412,7 @@ export default function GoalTracker({ user }) {
                 {(goal.milestones || []).length > 0 && (
                   <>
                     <ProgressBar>
-                      <ProgressFill pct={pct} category={goal.category} />
+                      <ProgressFill $pct={pct} $category={goal.category} />
                     </ProgressBar>
                     <ProgressText>{pct}% complete · {(goal.milestones || []).filter(m => m.done).length}/{(goal.milestones || []).length} milestones</ProgressText>
                   </>
@@ -401,8 +428,8 @@ export default function GoalTracker({ user }) {
                     >
                       <MilestoneList onClick={e => e.stopPropagation()}>
                         {(goal.milestones || []).map((m, i) => (
-                          <MilestoneRow key={i} done={m.done} onClick={() => toggleMilestone(goal, i)}>
-                            <MCCheck done={m.done} cat={goal.category}>
+                          <MilestoneRow key={i} $done={m.done} onClick={() => toggleMilestone(goal, i)}>
+                            <MCCheck $done={m.done} $cat={goal.category}>
                               {m.done && (
                                 <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3">
                                   <polyline points="20 6 9 17 4 12" />
@@ -487,7 +514,21 @@ export default function GoalTracker({ user }) {
               </FormGroup>
 
               <FormGroup>
-                <label>Milestones (optional — break it down)</label>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+                  <label style={{ margin: 0 }}>Milestones (optional — break it down)</label>
+                  <button
+                    onClick={generateAI}
+                    disabled={isGenerating || !form.title.trim()}
+                    style={{
+                      background: 'linear-gradient(135deg, #a855f7 0%, #6366f1 100%)',
+                      color: 'white', border: 'none', padding: '0.4rem 0.8rem',
+                      borderRadius: '8px', fontSize: '0.75rem', fontWeight: 'bold', cursor: 'pointer',
+                      opacity: isGenerating ? 0.7 : 1
+                    }}
+                  >
+                    {isGenerating ? "✨ Generating..." : "✨ Auto-Generate with AI"}
+                  </button>
+                </div>
                 <MilestoneInputRow>
                   <MilestoneInput placeholder="e.g. Complete Physics syllabus"
                     value={mInput} onChange={e => setMInput(e.target.value)}

@@ -311,7 +311,7 @@ export default function AIGuide() {
             whileTap={{ scale: 0.95 }}
           >
             <Sparkles size={20} style={{ marginRight: "8px" }} />
-            <span style={{ fontSize: "0.95rem", fontWeight: "600" }}>Talk to AI Mentor</span>
+            <span style={{ fontSize: "0.95rem", fontWeight: "600" }}>Talk to Saarathii AI</span>
           </FloatingBtn>
         )}
       </AnimatePresence>

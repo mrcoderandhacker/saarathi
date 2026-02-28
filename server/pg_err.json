@@ -1,0 +1,8 @@
+{
+  "stack": "Error: getaddrinfo ENOTFOUND db.jqchzznzhcuqlpmqakmd.supabase.co\n    at C:\\Users\\vikas\\Desktop\\saarathi\\server\\node_modules\\pg-pool\\index.js:45:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async test ([eval]:1:236)",
+  "message": "getaddrinfo ENOTFOUND db.jqchzznzhcuqlpmqakmd.supabase.co",
+  "errno": -3008,
+  "code": "ENOTFOUND",
+  "syscall": "getaddrinfo",
+  "hostname": "db.jqchzznzhcuqlpmqakmd.supabase.co"
+}

@@ -92,6 +92,21 @@ const StageTag = styled.div`
   letter-spacing: 0.04em;
 `;
 
+const StageImage = styled.div`
+  width: 100%;
+  height: 150px;
+  background: #f8fafc;
+  border: 2px dashed #e2e8f0;
+  border-radius: 10px;
+  margin-bottom: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  color: #94a3b8;
+  font-weight: 500;
+`;
+
 const CardTitle = styled.h3`
   font-size: 0.95rem;
   font-weight: 700;
@@ -167,6 +182,7 @@ export default function WhoIsSaarathiFor() {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.08 }}
             >
+              <StageImage>📸 Student context image</StageImage>
               <StageTag color={s.tagColor} bg={s.tagBg}>{s.tag}</StageTag>
               <CardTitle>{s.title}</CardTitle>
               <CardText>{s.text}</CardText>

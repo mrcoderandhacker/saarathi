@@ -1,6 +1,6 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import styled from "styled-components";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Search, MapPin, Award, BookmarkPlus, BookmarkCheck, Filter } from "lucide-react";
 import Navbar from "../components/Navbar";
@@ -588,15 +588,35 @@ export default function CollegeExplorer() {
     setSaving(false);
   };
 
-  const filteredColleges = useMemo(() => {
-    return MOCK_DB.filter(c => {
-      const matchSearch = c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        c.location.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchStream = selectedStream === "All" || c.stream === selectedStream;
-      const matchType = selectedType === "All" || c.type === selectedType;
-      return matchSearch && matchStream && matchType;
-    });
+  const [colleges, setColleges] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch real colleges from the new Node/Express backend
+  useEffect(() => {
+    const fetchColleges = async () => {
+      try {
+        setLoading(true);
+        // Build query string based on filters
+        const params = new URLSearchParams();
+        if (searchQuery) params.append('search', searchQuery);
+        if (selectedStream !== 'All') params.append('stream', selectedStream);
+        if (selectedType !== 'All') params.append('type', selectedType);
+
+        const res = await fetch(`http://localhost:4000/api/colleges?${params.toString()}`);
+        if (!res.ok) throw new Error('API Error');
+        const data = await res.json();
+        setColleges(data);
+      } catch (e) {
+        console.error("Failed to fetch colleges:", e);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchColleges();
   }, [searchQuery, selectedStream, selectedType]);
+
+  const filteredColleges = colleges;
 
   return (
     <Layout>
@@ -652,7 +672,109 @@ export default function CollegeExplorer() {
           ))}
         </CategoryGrid>
 
-        {/* DATABASE SECTION REMOVED PER USER REQUEST */}
+        <DatabaseSection>
+          <SectionTitle>The Live Directory</SectionTitle>
+          <SectionSub>Filter and search across India's top colleges in real-time.</SectionSub>
+
+          <LayoutSplit>
+            <Sidebar>
+              <SearchContainer>
+                <SearchIconWrapper><Search size={18} /></SearchIconWrapper>
+                <SearchInput
+                  type="text"
+                  placeholder="Search IITs, NITs, AIIMS..."
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                />
+              </SearchContainer>
+
+              <FilterGroup>
+                <FilterTitle><Filter size={16} /> Stream</FilterTitle>
+                {["All", "Engineering", "Medical", "Law", "Design", "Business"].map(stream => (
+                  <FilterLabel key={stream}>
+                    <input
+                      type="radio"
+                      name="stream"
+                      checked={selectedStream === stream}
+                      onChange={() => setSelectedStream(stream)}
+                    />
+                    {stream}
+                  </FilterLabel>
+                ))}
+              </FilterGroup>
+
+              <FilterGroup>
+                <FilterTitle><Filter size={16} /> Type</FilterTitle>
+                {["All", "Government", "Private"].map(type => (
+                  <FilterLabel key={type}>
+                    <input
+                      type="radio"
+                      name="type"
+                      checked={selectedType === type}
+                      onChange={() => setSelectedType(type)}
+                    />
+                    {type}
+                  </FilterLabel>
+                ))}
+              </FilterGroup>
+            </Sidebar>
+
+            <ResultsArea>
+              {loading ? (
+                <EmptyResults>
+                  <h3>Loading Colleges...</h3>
+                  <p>Fetching real data from the Saarathii database.</p>
+                </EmptyResults>
+              ) : filteredColleges.length === 0 ? (
+                <EmptyResults>
+                  <h3>No matches found</h3>
+                  <p>Try adjusting your search or filters.</p>
+                </EmptyResults>
+              ) : (
+                <ResultsGrid>
+                  {filteredColleges.map((college, i) => {
+                    const isSaved = savedIds.has(college.id);
+                    return (
+                      <DetailedCollegeCard
+                        key={college.id}
+                        initial={{ opacity: 0, y: 15 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3, delay: i * 0.05 }}
+                      >
+                        <SaveBtn
+                          saved={isSaved ? 1 : 0}
+                          onClick={() => handleSaveToggle(college.id, college.name)}
+                        >
+                          {isSaved ? <BookmarkCheck size={18} /> : <BookmarkPlus size={18} />}
+                        </SaveBtn>
+                        <CTagsContainer>
+                          <CTag>{college.type}</CTag>
+                          <CTag bg="#f0fdf4" color="#166534">{college.stream}</CTag>
+                        </CTagsContainer>
+                        <CTitle>{college.name}</CTitle>
+                        <CLocation><MapPin size={14} /> {college.location}, {college.state}</CLocation>
+
+                        <CMetaContainer>
+                          <CMetaBlock>
+                            <CMetaLabel>Rank</CMetaLabel>
+                            <CMetaValue>
+                              <Award size={14} color="#f59e0b" />
+                              {college.nirf_rank ? `NIRF ${college.nirf_rank}` : 'N/A'}
+                            </CMetaValue>
+                          </CMetaBlock>
+                          <CMetaBlock>
+                            <CMetaLabel>Exam</CMetaLabel>
+                            <CMetaValue>{college.exam_accepted || 'Varies'}</CMetaValue>
+                          </CMetaBlock>
+                        </CMetaContainer>
+                      </DetailedCollegeCard>
+                    );
+                  })}
+                </ResultsGrid>
+              )}
+            </ResultsArea>
+          </LayoutSplit>
+        </DatabaseSection>
       </Container>
 
       <Footer />

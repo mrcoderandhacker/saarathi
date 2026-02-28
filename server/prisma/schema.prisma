@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// -------------------------------------------------------------
+// SAARATHII MAIN TABLES
+// -------------------------------------------------------------
+
+model colleges_master {
+  id             String   @id @default(uuid())
+  name           String
+  location       String
+  state          String
+  type           String   // 'Government' | 'Private'
+  stream         String   // 'Engineering' | 'Medical' | 'Design' etc.
+  nirf_rank      Int?
+  fee_approx     Int?     // Storing approximate total fees (in INR)
+  exam_accepted  String?
+  website_url    String?
+  created_at     DateTime @default(now())
+
+  @@map("colleges_master")
+}
+
+// -------------------------------------------------------------
+// AI DYNAMIC ROADMAPS
+// -------------------------------------------------------------
+model roadmaps {
+  id         String   @id @default(uuid())
+  user_id    String   // Foreign key to auth.users (handled loosely in Prisma if we don't introspect auth)
+  goal       String   
+  curriculum Json     // Stores the structured JSON month-by-month syllabus
+  created_at DateTime @default(now())
+}

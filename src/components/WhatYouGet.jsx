@@ -89,14 +89,30 @@ const ItemBody = styled.p`
 
 const ItemVisual = styled.div`
   background: ${p => p.bg || '#f8fafc'};
-  padding: 2rem;
+  padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   order: ${p => p.flip ? 1 : 2};
-  min-height: 120px;
+  min-height: 250px;
+  position: relative;
+  overflow: hidden;
 
-  @media (max-width: 767px) { order: 2; min-height: 80px; }
+  &::after {
+    content: '📸 Image Placeholder (Feature Demo)';
+    position: absolute;
+    inset: 10%;
+    border: 2px dashed rgba(0,0,0,0.15);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: rgba(0,0,0,0.3);
+  }
+
+  @media (max-width: 767px) { order: 2; min-height: 200px; }
 `;
 
 const VisualTag = styled.div`

@@ -79,6 +79,21 @@ const BentoCard = styled(motion.div)`
   }
 `;
 
+const BentoImage = styled.div`
+  width: 100%;
+  height: ${p => p.tall ? '180px' : '140px'};
+  background: ${p => p.dark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)'};
+  border: 2px dashed ${p => p.dark ? 'rgba(255,255,255,0.1)' : '#cbd5e1'};
+  border-radius: 12px;
+  margin-bottom: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: ${p => p.dark ? 'rgba(255,255,255,0.3)' : '#94a3b8'};
+`;
+
 const CardLabel = styled.div`
   font-size: 0.7rem;
   font-weight: 700;
@@ -135,99 +150,100 @@ const PreviewStrip = styled.div`
 `;
 
 const FEATURES = [
-    {
-        label: "Career Discovery",
-        title: "Find what actually fits you",
-        text: "A 5-question quiz that maps your strengths and interests to real career paths — not generic advice.",
-        link: "Try the quiz",
-        route: "/discover",
-        bg: "#f0f0ff",
-        preview: { text: "→ Problem Solver · Engineering · CS · Research", bg: "rgba(99,102,241,0.08)", color: "#4f46e5" }
-    },
-    {
-        label: "Dashboard",
-        title: "Your life, structured",
-        text: "Track goals, build daily routines, log your mood, and measure your own growth — all in one place.",
-        link: "See dashboard",
-        route: "/dashboard",
-        bg: "#f0fdf4",
-        preview: { text: "Streak: 4 days · Life Score: 65/100", bg: "rgba(16,185,129,0.08)", color: "#059669" }
-    },
-    {
-        label: "Explore Paths",
-        title: "8 career streams, clearly laid out",
-        text: "Engineering to design, law to psychology — honest descriptions of what each path really involves.",
-        link: "Explore paths",
-        route: "/explore",
-        bg: "#fffbeb",
-        preview: { text: "Medicine · Law · Design · Business · and more", bg: "rgba(245,158,11,0.08)", color: "#d97706" }
-    },
-    {
-        label: "Mentor",
-        title: "A real person in your corner",
-        text: "With Gold, you get a personally matched mentor who sees your dashboard, sets your roadmap, and stays with you.",
-        link: "Learn about Gold",
-        route: "/dashboard",
-        dark: true,
-        wide: true,
-        preview: null
-    },
-    {
-        label: "Scholarships & Calendar",
-        title: "The things most students miss",
-        text: "Government scholarships you likely don't know about. Every 2026 exam date, in one place.",
-        link: "See scholarships",
-        route: "/scholarships",
-        bg: "#f5f3ff",
-        preview: { text: "KVPY · INSPIRE · AICTE Pragati · and 5 more", bg: "rgba(139,92,246,0.08)", color: "#7c3aed" }
-    },
+  {
+    label: "Career Discovery",
+    title: "Find what actually fits you",
+    text: "A quick quiz mapping your strengths and interests to real career paths.",
+    link: "Try the quiz",
+    route: "/discover",
+    bg: "#f0f0ff",
+    preview: { text: "→ Problem Solver · Engineering · CS · Research", bg: "rgba(99,102,241,0.08)", color: "#4f46e5" }
+  },
+  {
+    label: "Dashboard",
+    title: "Your life, structured",
+    text: "Track goals, build routines, and measure your own growth — all in one place.",
+    link: "See dashboard",
+    route: "/dashboard",
+    bg: "#f0fdf4",
+    preview: { text: "Streak: 4 days · Life Score: 65/100", bg: "rgba(16,185,129,0.08)", color: "#059669" }
+  },
+  {
+    label: "Explore Paths",
+    title: "8 career streams, laid out",
+    text: "Engineering to design, law to psychology — honest descriptions of each path.",
+    link: "Explore paths",
+    route: "/explore",
+    bg: "#fffbeb",
+    preview: { text: "Medicine · Law · Design · Business · and more", bg: "rgba(245,158,11,0.08)", color: "#d97706" }
+  },
+  {
+    label: "Mentor",
+    title: "A real person in your corner",
+    text: "With Gold, get a matched mentor who tracks your dashboard and stays with you.",
+    link: "Learn about Gold",
+    route: "/mentorship",
+    dark: true,
+    wide: true,
+    preview: null
+  },
+  {
+    label: "Scholarships & Calendar",
+    title: "The things most miss",
+    text: "Government scholarships and every 2026 exam date, curated in one place.",
+    link: "See scholarships",
+    route: "/scholarships",
+    bg: "#f5f3ff",
+    preview: { text: "KVPY · INSPIRE · AICTE Pragati · and 5 more", bg: "rgba(139,92,246,0.08)", color: "#7c3aed" }
+  },
 ];
 
 export default function FeatureShowcase() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    return (
-        <Section>
-            <Container>
-                <SectionLabel>What's inside Saarathii</SectionLabel>
-                <SectionTitle
-                    initial={{ opacity: 0, y: 16 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5 }}
-                >
-                    Built around how students actually think.
-                </SectionTitle>
-                <SectionSub>
-                    Tools that help you discover yourself, plan your path, and stay consistent — whether or not you have a mentor.
-                </SectionSub>
+  return (
+    <Section>
+      <Container>
+        <SectionLabel>What's inside Saarathii</SectionLabel>
+        <SectionTitle
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
+          Built around how students actually think.
+        </SectionTitle>
+        <SectionSub>
+          Tools that help you discover yourself, plan your path, and stay consistent — whether or not you have a mentor.
+        </SectionSub>
 
-                <BentoGrid>
-                    {FEATURES.map((f, i) => (
-                        <BentoCard
-                            key={f.title}
-                            dark={f.dark}
-                            bg={f.bg}
-                            wide={f.wide}
-                            onClick={() => navigate(f.route)}
-                            initial={{ opacity: 0, y: 16 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.45, delay: i * 0.07 }}
-                        >
-                            <CardLabel dark={f.dark}>{f.label}</CardLabel>
-                            <CardTitle dark={f.dark}>{f.title}</CardTitle>
-                            <CardText dark={f.dark} hasLink={!!f.link}>{f.text}</CardText>
-                            {f.preview && (
-                                <PreviewStrip bg={f.preview.bg} color={f.preview.color}>
-                                    {f.preview.text}
-                                </PreviewStrip>
-                            )}
-                            <CardLink dark={f.dark}>{f.link}</CardLink>
-                        </BentoCard>
-                    ))}
-                </BentoGrid>
-            </Container>
-        </Section>
-    );
+        <BentoGrid>
+          {FEATURES.map((f, i) => (
+            <BentoCard
+              key={f.title}
+              dark={f.dark}
+              bg={f.bg}
+              wide={f.wide}
+              onClick={() => navigate(f.route)}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.45, delay: i * 0.07 }}
+            >
+              <BentoImage dark={f.dark} tall={f.wide}>📸 Feature visual placeholder</BentoImage>
+              <CardLabel dark={f.dark}>{f.label}</CardLabel>
+              <CardTitle dark={f.dark}>{f.title}</CardTitle>
+              <CardText dark={f.dark} hasLink={!!f.link}>{f.text}</CardText>
+              {f.preview && (
+                <PreviewStrip bg={f.preview.bg} color={f.preview.color}>
+                  {f.preview.text}
+                </PreviewStrip>
+              )}
+              <CardLink dark={f.dark}>{f.link}</CardLink>
+            </BentoCard>
+          ))}
+        </BentoGrid>
+      </Container>
+    </Section>
+  );
 }
