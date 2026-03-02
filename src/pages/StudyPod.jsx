@@ -25,6 +25,13 @@ const PodPage = styled.div`
   font-family: 'Inter', sans-serif;
   transition: background 0.6s ease;
   overflow: hidden;
+
+  @media (max-width: 900px) {
+    position: relative;
+    height: auto;
+    min-height: 100vh;
+    overflow-y: auto;
+  }
   
   /* Dynamic animated background when running */
   ${p => p.running && `
@@ -48,6 +55,13 @@ const TopBar = styled.div`
   border-bottom: 1px solid rgba(255,255,255,0.07);
   flex-shrink: 0;
   z-index: 10;
+  
+  @media (max-width: 768px) {
+    padding: 0.75rem 1rem;
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
 `;
 
 const Logo = styled.div`
@@ -63,6 +77,11 @@ const TopRight = styled.div`
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  
+  @media (max-width: 768px) {
+    width: 100%;
+    justify-content: space-between;
+  }
 `;
 
 const TopBtn = styled(motion.button)`
@@ -76,6 +95,11 @@ const TopBtn = styled(motion.button)`
   cursor: pointer;
   transition: all 0.2s;
   &:hover { background: rgba(255,255,255,0.14); color: white; }
+  
+  @media (max-width: 768px) {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.75rem;
+  }
 `;
 
 const FocusToggle = styled(motion.button)`
@@ -88,6 +112,11 @@ const FocusToggle = styled(motion.button)`
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
+  
+  @media (max-width: 768px) {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.75rem;
+  }
 `;
 
 const MainGrid = styled.div`
@@ -106,8 +135,11 @@ const MainGrid = styled.div`
 
   @media (max-width: 900px) {
     grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto;
-    overflow-y: auto;
+    grid-auto-rows: auto;
+    gap: 1.5rem;
+    padding: 1rem;
+    overflow-y: visible; /* Let it expand the container instead */
+    ${p => p.focused && `padding: 1rem;`}
   }
 `;
 
@@ -118,6 +150,10 @@ const LeftPanel = styled.div`
   overflow-y: auto;
   &::-webkit-scrollbar { width: 3px; }
   &::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 999px; }
+  
+  @media (max-width: 900px) {
+    overflow-y: visible;
+  }
 `;
 
 const CenterPanel = styled.div`
@@ -125,12 +161,20 @@ const CenterPanel = styled.div`
   flex-direction: column;
   gap: 0.75rem;
   min-height: 0;
+  
+  @media (max-width: 900px) {
+    min-height: 400px; /* Ensure YouTube has space before scrolling */
+  }
 `;
 
 const RightPanel = styled.div`
   display: flex;
   flex-direction: column;
   min-height: 0;
+  
+  @media (max-width: 900px) {
+    min-height: 500px; /* So notes/tasks have a reasonable height */
+  }
 `;
 
 const ThemeCard = styled.div`
