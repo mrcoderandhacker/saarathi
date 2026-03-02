@@ -12,7 +12,13 @@ import SessionSummary from "../components/studypod/SessionSummary";
 import StudyHistory from "../components/studypod/StudyHistory";
 
 const PodGlobal = createGlobalStyle`
-  body { overflow: hidden; }
+  body { 
+    overflow: hidden; 
+    @media (max-width: 900px) {
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+  }
 `;
 
 const PodPage = styled.div`
@@ -27,10 +33,10 @@ const PodPage = styled.div`
   overflow: hidden;
 
   @media (max-width: 900px) {
-    position: relative;
-    height: auto;
+    position: absolute; /* Let the body handle scrolling */
     min-height: 100vh;
-    overflow-y: auto;
+    height: auto;
+    overflow-y: visible;
   }
   
   /* Dynamic animated background when running */
@@ -230,230 +236,230 @@ const CenterToggle = styled.button`
 `;
 
 export default function StudyPod() {
-    const navigate = useNavigate();
-    const [themeKey, setThemeKey] = useState('midnight');
-    const [pomodoroCount, setPomodoroCount] = useState(0);
-    const [timerRunning, setTimerRunning] = useState(false);
-    const [session, setSession] = useState(null);
-    const [showSummary, setShowSummary] = useState(false);
-    const [focusMode, setFocusMode] = useState(false);
-    const [isFullscreen, setIsFullscreen] = useState(false);
-    const [rightTab, setRightTab] = useState('session'); // 'session' | 'history'
-    const [centerTab, setCenterTab] = useState('youtube'); // 'youtube' | 'spotify'
-    const sidebarRef = useRef(null);
+  const navigate = useNavigate();
+  const [themeKey, setThemeKey] = useState('midnight');
+  const [pomodoroCount, setPomodoroCount] = useState(0);
+  const [timerRunning, setTimerRunning] = useState(false);
+  const [session, setSession] = useState(null);
+  const [showSummary, setShowSummary] = useState(false);
+  const [focusMode, setFocusMode] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [rightTab, setRightTab] = useState('session'); // 'session' | 'history'
+  const [centerTab, setCenterTab] = useState('youtube'); // 'youtube' | 'spotify'
+  const sidebarRef = useRef(null);
 
-    const theme = THEMES[themeKey];
+  const theme = THEMES[themeKey];
 
-    const toggleFullscreen = useCallback(() => {
-        if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen?.();
-        } else {
-            document.exitFullscreen?.();
-        }
-    }, []);
+  const toggleFullscreen = useCallback(() => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen?.();
+    } else {
+      document.exitFullscreen?.();
+    }
+  }, []);
 
-    useEffect(() => {
-        const onChange = () => setIsFullscreen(!!document.fullscreenElement);
-        document.addEventListener('fullscreenchange', onChange);
-        return () => document.removeEventListener('fullscreenchange', onChange);
-    }, []);
+  useEffect(() => {
+    const onChange = () => setIsFullscreen(!!document.fullscreenElement);
+    document.addEventListener('fullscreenchange', onChange);
+    return () => document.removeEventListener('fullscreenchange', onChange);
+  }, []);
 
-    const [userId, setUserId] = useState(null);
+  const [userId, setUserId] = useState(null);
 
-    useEffect(() => {
-        const fetchUser = async () => {
-            const { data: { session } } = await supabase.auth.getSession();
-            setUserId(session?.user?.id || null);
-        };
-        fetchUser();
-
-        const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
-            setUserId(session?.user?.id || null);
-        });
-
-        return () => authListener.subscription.unsubscribe();
-    }, []);
-
-    const handlePomodoroComplete = useCallback(({ pomodoros }) => {
-        setPomodoroCount(pomodoros);
-    }, []);
-
-    const handleEndSession = useCallback(async (data) => {
-        setSession(data);
-        setShowSummary(true);
-        setRightTab('history');
-
-        if (userId) {
-            await supabaseDb.from('study_sessions').insert({
-                user_id: userId,
-                focus_minutes: Math.round((data.elapsedSeconds || 0) / 60),
-                pomodoros_completed: data.pomodoroCount,
-                session_goal: data.goal,
-                tasks_completed: data.tasksCompleted,
-                vibe_theme: themeKey,
-                started_at: new Date(Date.now() - (data.elapsedSeconds || 0) * 1000).toISOString(),
-                ended_at: new Date().toISOString(),
-            });
-        }
-    }, [userId, themeKey]);
-
-    const handleLoadTemplate = useCallback((t) => {
-        if (t.theme) setThemeKey(t.theme);
-        // Signal sidebar to load goal + tasks
-        if (sidebarRef.current?.loadTemplate) {
-            sidebarRef.current.loadTemplate(t);
-        }
-        setRightTab('session');
-    }, []);
-
-    const handleNewSession = () => {
-        setShowSummary(false);
-        setSession(null);
-        setPomodoroCount(0);
-        setRightTab('session');
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setUserId(session?.user?.id || null);
     };
+    fetchUser();
 
-    return (
-        <>
-            <PodGlobal />
-            <PodPage bg={theme.bg} textColor={theme.text} running={timerRunning}>
-                {/* Top Bar */}
-                {!focusMode && (
-                    <TopBar>
-                        <Logo>
-                            <span style={{ fontSize: '1.2rem' }}>🎯</span>
-                            Study Pod
-                            <LiveBadge>LIVE</LiveBadge>
-                        </Logo>
-                        <TopRight>
-                            <FocusToggle
-                                focused={focusMode}
-                                accent={theme.accent}
-                                onClick={() => setFocusMode(f => !f)}
-                                whileTap={{ scale: 0.95 }}
-                            >
-                                🔒 Focus Mode
-                            </FocusToggle>
-                            <TopBtn onClick={toggleFullscreen} whileTap={{ scale: 0.95 }}>
-                                {isFullscreen ? '🔲 Exit Fullscreen' : '🔲 Fullscreen'}
-                            </TopBtn>
-                            <TopBtn onClick={() => navigate('/dashboard')} whileTap={{ scale: 0.95 }}>
-                                ← Dashboard
-                            </TopBtn>
-                        </TopRight>
-                    </TopBar>
-                )}
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUserId(session?.user?.id || null);
+    });
 
-                {/* Main Grid */}
-                <MainGrid focused={focusMode}>
-                    {/* LEFT: Timer + Mixer + Theme */}
-                    <AnimatePresence>
-                        {!focusMode && (
-                            <motion.div
-                                initial={{ x: -20, opacity: 0 }}
-                                animate={{ x: 0, opacity: 1 }}
-                                exit={{ x: -20, opacity: 0 }}
-                                transition={{ duration: 0.25 }}
-                                style={{ display: 'contents' }}
-                            >
-                                <LeftPanel>
-                                    <PomodoroTimer
-                                        accent={theme.accent}
-                                        panelBg={theme.panelBg}
-                                        onSessionComplete={handlePomodoroComplete}
-                                        onRunningChange={setTimerRunning}
-                                    />
-                                    <AmbientMixer accent={theme.accent} panelBg={theme.panelBg} />
-                                    <ThemeCard panelBg={theme.panelBg}>
-                                        <ThemeSwitcher currentTheme={themeKey} onChange={setThemeKey} />
-                                    </ThemeCard>
-                                </LeftPanel>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
+    return () => authListener.subscription.unsubscribe();
+  }, []);
 
-                    {/* CENTER: Video/Music Player & Focus Controls */}
-                    <CenterPanel>
-                        {focusMode && (
-                            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
-                                <FocusToggle
-                                    focused={focusMode}
-                                    accent={theme.accent}
-                                    onClick={() => setFocusMode(false)}
-                                    whileTap={{ scale: 0.95 }}
-                                >
-                                    🔓 Exit Focus
-                                </FocusToggle>
-                            </div>
-                        )}
-                        <YouTubePlayer
-                            accent={theme.accent}
-                            panelBg={theme.panelBg}
-                            userId={userId}
-                        />
-                    </CenterPanel>
+  const handlePomodoroComplete = useCallback(({ pomodoros }) => {
+    setPomodoroCount(pomodoros);
+  }, []);
 
-                    {/* RIGHT: Session / History Panel */}
-                    <AnimatePresence>
-                        {!focusMode && (
-                            <motion.div
-                                initial={{ x: 20, opacity: 0 }}
-                                animate={{ x: 0, opacity: 1 }}
-                                exit={{ x: 20, opacity: 0 }}
-                                transition={{ duration: 0.25 }}
-                                style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', minHeight: 0 }}
-                            >
-                                {/* Tab switcher */}
-                                <div style={{ display: 'flex', gap: '0.4rem' }}>
-                                    {['session', 'history'].map(t => (
-                                        <button key={t} onClick={() => setRightTab(t)} style={{
-                                            flex: 1, padding: '0.45rem', border: 'none', borderRadius: '10px',
-                                            background: rightTab === t ? theme.accent : 'rgba(255,255,255,0.07)',
-                                            color: rightTab === t ? 'white' : 'rgba(255,255,255,0.45)',
-                                            fontWeight: 700, fontSize: '0.75rem', cursor: 'pointer',
-                                            textTransform: 'capitalize', transition: 'all 0.2s'
-                                        }}>
-                                            {t === 'session' ? '📋 Session' : '📊 History'}
-                                        </button>
-                                    ))}
-                                </div>
+  const handleEndSession = useCallback(async (data) => {
+    setSession(data);
+    setShowSummary(true);
+    setRightTab('history');
 
-                                <RightPanel>
-                                    {rightTab === 'session' ? (
-                                        <SessionSidebar
-                                            ref={sidebarRef}
-                                            accent={theme.accent}
-                                            panelBg={theme.panelBg}
-                                            pomodoroCount={pomodoroCount}
-                                            onEndSession={handleEndSession}
-                                        />
-                                    ) : (
-                                        <StudyHistory
-                                            accent={theme.accent}
-                                            panelBg={theme.panelBg}
-                                            userId={userId}
-                                            currentSession={{ theme: themeKey }}
-                                            onLoadTemplate={handleLoadTemplate}
-                                        />
-                                    )}
-                                </RightPanel>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-                </MainGrid>
+    if (userId) {
+      await supabaseDb.from('study_sessions').insert({
+        user_id: userId,
+        focus_minutes: Math.round((data.elapsedSeconds || 0) / 60),
+        pomodoros_completed: data.pomodoroCount,
+        session_goal: data.goal,
+        tasks_completed: data.tasksCompleted,
+        vibe_theme: themeKey,
+        started_at: new Date(Date.now() - (data.elapsedSeconds || 0) * 1000).toISOString(),
+        ended_at: new Date().toISOString(),
+      });
+    }
+  }, [userId, themeKey]);
 
-                {/* Session Summary Modal */}
-                <AnimatePresence>
-                    {showSummary && (
-                        <SessionSummary
-                            session={session}
-                            accent={theme.accent}
-                            onNewSession={handleNewSession}
-                            onClose={() => setShowSummary(false)}
-                        />
-                    )}
-                </AnimatePresence>
-            </PodPage>
-        </>
-    );
+  const handleLoadTemplate = useCallback((t) => {
+    if (t.theme) setThemeKey(t.theme);
+    // Signal sidebar to load goal + tasks
+    if (sidebarRef.current?.loadTemplate) {
+      sidebarRef.current.loadTemplate(t);
+    }
+    setRightTab('session');
+  }, []);
+
+  const handleNewSession = () => {
+    setShowSummary(false);
+    setSession(null);
+    setPomodoroCount(0);
+    setRightTab('session');
+  };
+
+  return (
+    <>
+      <PodGlobal />
+      <PodPage bg={theme.bg} textColor={theme.text} running={timerRunning}>
+        {/* Top Bar */}
+        {!focusMode && (
+          <TopBar>
+            <Logo>
+              <span style={{ fontSize: '1.2rem' }}>🎯</span>
+              Study Pod
+              <LiveBadge>LIVE</LiveBadge>
+            </Logo>
+            <TopRight>
+              <FocusToggle
+                focused={focusMode}
+                accent={theme.accent}
+                onClick={() => setFocusMode(f => !f)}
+                whileTap={{ scale: 0.95 }}
+              >
+                🔒 Focus Mode
+              </FocusToggle>
+              <TopBtn onClick={toggleFullscreen} whileTap={{ scale: 0.95 }}>
+                {isFullscreen ? '🔲 Exit Fullscreen' : '🔲 Fullscreen'}
+              </TopBtn>
+              <TopBtn onClick={() => navigate('/dashboard')} whileTap={{ scale: 0.95 }}>
+                ← Dashboard
+              </TopBtn>
+            </TopRight>
+          </TopBar>
+        )}
+
+        {/* Main Grid */}
+        <MainGrid focused={focusMode}>
+          {/* LEFT: Timer + Mixer + Theme */}
+          <AnimatePresence>
+            {!focusMode && (
+              <motion.div
+                initial={{ x: -20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: -20, opacity: 0 }}
+                transition={{ duration: 0.25 }}
+                style={{ display: 'contents' }}
+              >
+                <LeftPanel>
+                  <PomodoroTimer
+                    accent={theme.accent}
+                    panelBg={theme.panelBg}
+                    onSessionComplete={handlePomodoroComplete}
+                    onRunningChange={setTimerRunning}
+                  />
+                  <AmbientMixer accent={theme.accent} panelBg={theme.panelBg} />
+                  <ThemeCard panelBg={theme.panelBg}>
+                    <ThemeSwitcher currentTheme={themeKey} onChange={setThemeKey} />
+                  </ThemeCard>
+                </LeftPanel>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* CENTER: Video/Music Player & Focus Controls */}
+          <CenterPanel>
+            {focusMode && (
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
+                <FocusToggle
+                  focused={focusMode}
+                  accent={theme.accent}
+                  onClick={() => setFocusMode(false)}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  🔓 Exit Focus
+                </FocusToggle>
+              </div>
+            )}
+            <YouTubePlayer
+              accent={theme.accent}
+              panelBg={theme.panelBg}
+              userId={userId}
+            />
+          </CenterPanel>
+
+          {/* RIGHT: Session / History Panel */}
+          <AnimatePresence>
+            {!focusMode && (
+              <motion.div
+                initial={{ x: 20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: 20, opacity: 0 }}
+                transition={{ duration: 0.25 }}
+                style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', minHeight: 0 }}
+              >
+                {/* Tab switcher */}
+                <div style={{ display: 'flex', gap: '0.4rem' }}>
+                  {['session', 'history'].map(t => (
+                    <button key={t} onClick={() => setRightTab(t)} style={{
+                      flex: 1, padding: '0.45rem', border: 'none', borderRadius: '10px',
+                      background: rightTab === t ? theme.accent : 'rgba(255,255,255,0.07)',
+                      color: rightTab === t ? 'white' : 'rgba(255,255,255,0.45)',
+                      fontWeight: 700, fontSize: '0.75rem', cursor: 'pointer',
+                      textTransform: 'capitalize', transition: 'all 0.2s'
+                    }}>
+                      {t === 'session' ? '📋 Session' : '📊 History'}
+                    </button>
+                  ))}
+                </div>
+
+                <RightPanel>
+                  {rightTab === 'session' ? (
+                    <SessionSidebar
+                      ref={sidebarRef}
+                      accent={theme.accent}
+                      panelBg={theme.panelBg}
+                      pomodoroCount={pomodoroCount}
+                      onEndSession={handleEndSession}
+                    />
+                  ) : (
+                    <StudyHistory
+                      accent={theme.accent}
+                      panelBg={theme.panelBg}
+                      userId={userId}
+                      currentSession={{ theme: themeKey }}
+                      onLoadTemplate={handleLoadTemplate}
+                    />
+                  )}
+                </RightPanel>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </MainGrid>
+
+        {/* Session Summary Modal */}
+        <AnimatePresence>
+          {showSummary && (
+            <SessionSummary
+              session={session}
+              accent={theme.accent}
+              onNewSession={handleNewSession}
+              onClose={() => setShowSummary(false)}
+            />
+          )}
+        </AnimatePresence>
+      </PodPage>
+    </>
+  );
 }
