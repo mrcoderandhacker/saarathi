@@ -602,7 +602,8 @@ export default function CollegeExplorer() {
         if (selectedStream !== 'All') params.append('stream', selectedStream);
         if (selectedType !== 'All') params.append('type', selectedType);
 
-        const res = await fetch(`http://localhost:4000/api/colleges?${params.toString()}`);
+        const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+        const res = await fetch(`${baseUrl}/api/colleges?${params.toString()}`);
         if (!res.ok) throw new Error('API Error');
         const data = await res.json();
         setColleges(data);

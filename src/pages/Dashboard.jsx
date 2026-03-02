@@ -263,6 +263,39 @@ export default function Dashboard() {
             </div>
           </WelcomeRow>
 
+          {/* Study Pod Quick Access */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            onClick={() => window.location.href = '/study-pod'}
+            style={{
+              background: 'linear-gradient(135deg, #1e1b4b, #312e81)',
+              borderRadius: '16px',
+              padding: '1rem 1.5rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              cursor: 'pointer',
+              marginBottom: '1.5rem',
+              border: '1px solid rgba(99,102,241,0.3)',
+              transition: 'transform 0.2s, box-shadow 0.2s',
+            }}
+            whileHover={{ y: -2, boxShadow: '0 8px 30px rgba(99,102,241,0.25)' }}
+            whileTap={{ scale: 0.99 }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <div style={{ fontSize: '2rem' }}>🎯</div>
+              <div>
+                <div style={{ fontWeight: 700, color: 'white', fontSize: '1rem' }}>Study Pod</div>
+                <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)' }}>Pomodoro · Ambient Sounds · YouTube · Focus Mode</div>
+              </div>
+            </div>
+            <div style={{ background: 'rgba(255,255,255,0.1)', borderRadius: '8px', padding: '0.4rem 1rem', color: 'white', fontSize: '0.82rem', fontWeight: 600 }}>
+              Enter Pod →
+            </div>
+          </motion.div>
+
           {/* Daily Greeting Override */}
           <AnimatePresence>
             {showGreetingModal && (

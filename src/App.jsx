@@ -25,6 +25,7 @@ import About from "./pages/About";
 import ScrollToTop from "./components/ScrollToTop";
 import AIGuide from "./components/chat/AIGuide";
 import MaintenanceOverlay, { useMaintenanceMode } from "./components/MaintenanceOverlay";
+import StudyPod from "./pages/StudyPod";
 
 export default function App() {
   const location = useLocation();
@@ -53,8 +54,8 @@ export default function App() {
   return (
     <>
       <ScrollToTop />
-      {/* NAVBAR ALWAYS PRESENT */}
-      <Navbar animate={!showIntro} />
+      {/* NAVBAR — hidden on Study Pod (has its own top bar) */}
+      {location.pathname !== '/study-pod' && <Navbar animate={!showIntro} />}
 
       {/* SPLASH INTRO */}
       <AnimatePresence>
@@ -83,11 +84,12 @@ export default function App() {
         <Route path="/scholarships" element={<Scholarships />} />
         <Route path="/calendar" element={<ExamCalendar />} />
         <Route path="/about" element={<About />} />
+        <Route path="/study-pod" element={<StudyPod />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
 
-      {/* GLOBAL AI MENTOR WIDGET */}
-      <AIGuide />
+      {/* GLOBAL AI MENTOR WIDGET — hidden on Study Pod */}
+      {location.pathname !== '/study-pod' && <AIGuide />}
     </>
   );
 }
