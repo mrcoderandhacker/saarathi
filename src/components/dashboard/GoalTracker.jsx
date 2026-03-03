@@ -334,7 +334,8 @@ export default function GoalTracker({ user }) {
     setIsGenerating(true);
     try {
       // In production, configure API base URL properly. Defaulting to local backend port 4000.
-      const res = await fetch("http://127.0.0.1:4000/api/ai/generate-roadmap", {
+      const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:4000";
+      const res = await fetch(`${baseUrl}/api/ai/generate-roadmap`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId: user.id, goal: form.title, durationMonths: 6 })
