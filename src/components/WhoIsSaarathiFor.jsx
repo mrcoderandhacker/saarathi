@@ -96,15 +96,21 @@ const StageImage = styled.div`
   width: 100%;
   height: 150px;
   background: #f8fafc;
-  border: 2px dashed #e2e8f0;
   border-radius: 10px;
   margin-bottom: 1.2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.8rem;
-  color: #94a3b8;
-  font-weight: 500;
+  overflow: hidden;
+  position: relative;
+`;
+
+const StageImg = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+  
+  ${Card}:hover & {
+    transform: scale(1.1);
+  }
 `;
 
 const CardTitle = styled.h3`
@@ -125,6 +131,7 @@ const STAGES = [
   {
     tag: "Class 10",
     title: "Finding direction early",
+    image: "/images/stages/class-10.jpg",
     text: "Stepping out of foundational schooling and wondering which stream suits you — without pressure or rush.",
     accent: "#6366f1",
     tagColor: "#4f46e5",
@@ -133,6 +140,7 @@ const STAGES = [
   {
     tag: "Class 11",
     title: "Building strong foundations",
+    image: "/images/stages/class-11.png",
     text: "You've chosen a stream. Now build the clarity, structure, and strategy to avoid confusion later.",
     accent: "#3b82f6",
     tagColor: "#1d4ed8",
@@ -141,6 +149,7 @@ const STAGES = [
   {
     tag: "Class 12",
     title: "Decisions that matter",
+    image: "/images/stages/class-12.png",
     text: "Facing competitive exams, counselling rounds, college choices — where one calm decision changes everything.",
     accent: "#f59e0b",
     tagColor: "#d97706",
@@ -149,6 +158,7 @@ const STAGES = [
   {
     tag: "Drop Year",
     title: "Regaining focus",
+    image: "/images/stages/drop-year.png",
     text: "Taking a pause to come back stronger — with the right mentorship, emotional support, and a clear plan forward.",
     accent: "#10b981",
     tagColor: "#059669",
@@ -182,7 +192,9 @@ export default function WhoIsSaarathiFor() {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.08 }}
             >
-              <StageImage>📸 Student context image</StageImage>
+              <StageImage>
+                <StageImg src={s.image} alt={s.tag} />
+              </StageImage>
               <StageTag color={s.tagColor} bg={s.tagBg}>{s.tag}</StageTag>
               <CardTitle>{s.title}</CardTitle>
               <CardText>{s.text}</CardText>

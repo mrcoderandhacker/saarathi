@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageCircle, X, Send, Sparkles } from "lucide-react";
+import { MessageCircle, X, Send, Sparkles, ChevronLeft } from "lucide-react";
 
 /* ---- STYLES ---- */
 const FloatingBtn = styled(motion.button)`
@@ -53,6 +53,7 @@ const ChatWidget = styled(motion.div)`
     height: 100dvh;
     max-height: 100dvh;
     border-radius: 0;
+    z-index: 2100;
   }
 `;
 
@@ -63,6 +64,10 @@ const ChatHeader = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  @media (max-width: 480px) {
+    padding-top: calc(1.2rem + env(safe-area-inset-top));
+  }
 `;
 
 const HeaderInfo = styled.div`
@@ -109,9 +114,9 @@ const Status = styled.div`
   }
 `;
 
-const CloseBtn = styled.button`
+const ActionBtn = styled.button`
   background: transparent;
-  color: rgba(255,255,255,0.6);
+  color: white;
   border: none;
   cursor: pointer;
   padding: 0.4rem;
@@ -119,7 +124,21 @@ const CloseBtn = styled.button`
   align-items: center;
   justify-content: center;
   border-radius: 8px;
-  &:hover { background: rgba(255,255,255,0.1); color: white; }
+  transition: all 0.2s;
+  &:hover { background: rgba(255,255,255,0.1); }
+`;
+
+const MobileBackBtn = styled(ActionBtn)`
+  display: none;
+  margin-right: 0.8rem;
+  @media (max-width: 480px) {
+    display: flex;
+  }
+`;
+
+const CloseBtn = styled(ActionBtn)`
+  color: rgba(255,255,255,0.6);
+  &:hover { color: white; }
 `;
 
 const ChatBody = styled.div`
@@ -177,6 +196,10 @@ const InputArea = styled.form`
   display: flex;
   gap: 0.6rem;
   align-items: flex-end;
+  
+  @media (max-width: 480px) {
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+  }
 `;
 
 const Input = styled.textarea`
@@ -240,6 +263,39 @@ export default function AIGuide() {
     endRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isLoading]);
 
+  // Handle browser back button to close chat
+  useEffect(() => {
+    if (isOpen) {
+      // Add a dummy history entry so back button can be intercepted
+      window.history.pushState({ chatOpen: true }, "");
+      
+      const handlePopState = (e) => {
+        // When user hits back, close the chat
+        setIsOpen(false);
+      };
+
+      window.addEventListener("popstate", handlePopState);
+      
+      // Disable body scroll when chat is full-screen on mobile
+      if (window.innerWidth <= 480) {
+        document.body.style.overflow = 'hidden';
+      }
+
+      return () => {
+        window.removeEventListener("popstate", handlePopState);
+        document.body.style.overflow = 'unset';
+      };
+    }
+  }, [isOpen]);
+
+  const closeChat = () => {
+    setIsOpen(false);
+    // If we pushed a state, go back to clean it up
+    if (window.history.state?.chatOpen) {
+      window.history.back();
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
@@ -252,8 +308,6 @@ export default function AIGuide() {
     setIsLoading(true);
 
     try {
-      // Use the Cloudflare proxy instead of Google directly 
-      // VITE_SUPABASE_URL now points to the proxy domain
       const proxyUrl = import.meta.env.VITE_SUPABASE_URL + "/ai";
 
       const payload = {
@@ -326,13 +380,16 @@ export default function AIGuide() {
           >
             <ChatHeader>
               <HeaderInfo>
+                <MobileBackBtn onClick={closeChat}>
+                  <ChevronLeft size={24} />
+                </MobileBackBtn>
                 <Avatar><Sparkles size={18} /></Avatar>
                 <TitleBlock>
                   <Title>Saarathii Guide</Title>
                   <Status>Online</Status>
                 </TitleBlock>
               </HeaderInfo>
-              <CloseBtn onClick={() => setIsOpen(false)}>
+              <CloseBtn onClick={closeChat}>
                 <X size={20} />
               </CloseBtn>
             </ChatHeader>

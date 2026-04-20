@@ -24,19 +24,23 @@ const ImagePlaceholder = styled.div`
   aspect-ratio: 4/3;
   background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
   border-radius: 20px;
+  overflow: hidden;
+  position: relative;
   border: 1px solid #e2e8f0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.6rem;
-  color: #94a3b8;
-  font-size: 0.85rem;
-  text-align: center;
-  padding: 2rem;
   order: 2;
 
   @media (min-width: 900px) { order: 1; }
+`;
+
+const ProblemImg = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+
+  &:hover {
+    transform: scale(1.05);
+  }
 `;
 
 const PlaceholderLabel = styled.div`
@@ -108,8 +112,7 @@ export default function MentorshipProblem() {
     <Section>
       <Container>
         <ImagePlaceholder>
-          <PlaceholderLabel>Image Placeholder</PlaceholderLabel>
-          Confused student / Overwhelmed decision visual
+          <ProblemImg src="/images/real-problem.jpg" alt="Student Confusion" />
         </ImagePlaceholder>
 
         <TextBlock>
@@ -144,4 +147,4 @@ export default function MentorshipProblem() {
       </Container>
     </Section>
   );
-}
+}

@@ -116,16 +116,20 @@ const ImagePlaceholder = styled.div`
   aspect-ratio: 4/3;
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
   border-radius: 20px;
+  overflow: hidden;
+  position: relative;
   border: 1px solid #e2e8f0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.6rem;
-  color: #9ca3af;
-  font-size: 0.85rem;
-  text-align: center;
-  padding: 2rem;
+`;
+
+const MentorImg = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+  
+  &:hover {
+    transform: scale(1.05);
+  }
 `;
 
 const PlaceholderLabel = styled.div`
@@ -184,11 +188,10 @@ export default function MentorshipHero() {
           transition={{ duration: 0.7, delay: 0.2 }}
         >
           <ImagePlaceholder>
-            <PlaceholderLabel>Image Placeholder</PlaceholderLabel>
-            Direction / Structured Roadmap Visual
+            <MentorImg src="/images/mentor.webp" alt="Mentorship Clarity" />
           </ImagePlaceholder>
         </VisualBlock>
       </Container>
     </Section>
   );
-}
+}

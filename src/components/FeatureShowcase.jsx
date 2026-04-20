@@ -83,7 +83,7 @@ const BentoImage = styled.div`
   width: 100%;
   height: ${p => p.tall ? '180px' : '140px'};
   background: ${p => p.dark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)'};
-  border: 2px dashed ${p => p.dark ? 'rgba(255,255,255,0.1)' : '#cbd5e1'};
+  border: ${p => p.hasImage ? 'none' : `2px dashed ${p.dark ? 'rgba(255,255,255,0.1)' : '#cbd5e1'}`};
   border-radius: 12px;
   margin-bottom: 1.2rem;
   display: flex;
@@ -92,6 +92,18 @@ const BentoImage = styled.div`
   font-size: 0.8rem;
   font-weight: 500;
   color: ${p => p.dark ? 'rgba(255,255,255,0.3)' : '#94a3b8'};
+  overflow: hidden;
+`;
+
+const FeatureImg = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+
+  ${BentoCard}:hover & {
+    transform: scale(1.05);
+  }
 `;
 
 const CardLabel = styled.div`
@@ -153,6 +165,7 @@ const FEATURES = [
   {
     label: "Career Discovery",
     title: "Find what actually fits you",
+    image: "/images/quiz.png",
     text: "A quick quiz mapping your strengths and interests to real career paths.",
     link: "Try the quiz",
     route: "/discover",
@@ -162,6 +175,7 @@ const FEATURES = [
   {
     label: "Dashboard",
     title: "Your life, structured",
+    image: "/images/dashboard.png",
     text: "Track goals, build routines, and measure your own growth — all in one place.",
     link: "See dashboard",
     route: "/dashboard",
@@ -171,6 +185,7 @@ const FEATURES = [
   {
     label: "Explore Paths",
     title: "8 career streams, laid out",
+    image: "/images/career-path.jpg",
     text: "Engineering to design, law to psychology — honest descriptions of each path.",
     link: "Explore paths",
     route: "/explore",
@@ -230,7 +245,13 @@ export default function FeatureShowcase() {
               viewport={{ once: true }}
               transition={{ duration: 0.45, delay: i * 0.07 }}
             >
-              <BentoImage dark={f.dark} tall={f.wide}>📸 Feature visual placeholder</BentoImage>
+              <BentoImage dark={f.dark} tall={f.wide} hasImage={!!f.image}>
+                {f.image ? (
+                  <FeatureImg src={f.image} alt={f.title} />
+                ) : (
+                  <>📸 Feature visual placeholder</>
+                )}
+              </BentoImage>
               <CardLabel dark={f.dark}>{f.label}</CardLabel>
               <CardTitle dark={f.dark}>{f.title}</CardTitle>
               <CardText dark={f.dark} hasLink={!!f.link}>{f.text}</CardText>
